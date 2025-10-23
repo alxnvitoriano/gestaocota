@@ -1,19 +1,28 @@
 "use client";
-import {
-  Activity,
-  Briefcase,
-  ChevronUp,
-  LayoutDashboard,
-  Settings,
-  User2,
-  Users,
-} from "lucide-react";
 
+import { AvatarFallback } from "@radix-ui/react-avatar";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import {
+  BadgeCheckIcon,
+  BookmarkCheck,
+  CalendarDays,
+  CheckCheck,
+  CircleCheckIcon,
+  HandCoins,
+  LayoutDashboard,
+  LogOut,
+  ShieldCheck,
+  UsersIcon,
+  UsersRound,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+
+import { Avatar } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
@@ -26,60 +35,97 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 
+// Menu items.
 const items = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "/dashboard",
     icon: LayoutDashboard,
-    view: "dashboard" as const,
   },
   {
-    title: "Contacts",
-    url: "#",
-    icon: Users,
-    view: "contacts" as const,
+    title: "Leads",
+    url: "/leads",
+    icon: UsersIcon,
   },
   {
-    title: "Deals",
-    url: "#",
-    icon: Briefcase,
-    view: "deals" as const,
+    title: "Vendedores",
+    url: "/sellers",
+    icon: HandCoins,
   },
   {
-    title: "Activities",
-    url: "#",
-    icon: Activity,
-    view: "activities" as const,
+    title: "Lev. Necessidade",
+    url: "/clients",
+    icon: UsersRound,
+  },
+  {
+    title: "Negociação",
+    url: "/negotiations",
+    icon: CircleCheckIcon,
+  },
+  {
+    title: "Análise",
+    url: "/analysis",
+    icon: CheckCheck,
+  },
+  {
+    title: "Agendamentos",
+    url: "/appointments",
+    icon: CalendarDays,
+  },
+  {
+    title: "Fechamento",
+    url: "/closures",
+    icon: BookmarkCheck,
+  },
+  {
+    title: "Controle Qual.",
+    url: "/quality-control",
+    icon: ShieldCheck,
+  },
+  {
+    title: "Resultado Assembléia",
+    url: "/assemblies",
+    icon: BadgeCheckIcon,
   },
 ];
 
-interface AppSidebarProps {
-  currentView: string;
-  onViewChange: (
-    view: "dashboard" | "contacts" | "deals" | "activities",
-  ) => void;
-}
-
-export function AppSidebar({ currentView, onViewChange }: AppSidebarProps) {
+export function AppSidebar() {
+  const router = useRouter();
+  const session = authClient.useSession();
+  const pathname = usePathname();
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/authentication");
+        },
+      },
+    });
+  };
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>CRM Platform</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={currentView === item.view}
-                    onClick={() => onViewChange(item.view)}
+                    data-active={pathname === item.url ? "true" : undefined}
+                    className={
+                      pathname === item.url
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : ""
+                    }
                   >
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -92,21 +138,26 @@ export function AppSidebar({ currentView, onViewChange }: AppSidebarProps) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <User2 /> Username
-                  <ChevronUp className="ml-auto" />
+                <SidebarMenuButton size="lg">
+                  <Avatar>
+                    <AvatarFallback>
+                      {session.data?.user.name[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm">
+                      {session.data?.user?.company?.name}
+                    </p>
+                    <p className="text-muted-foreground text-sm">
+                      {session.data?.user?.email}
+                    </p>
+                  </div>
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-(--radix-popper-anchor-width)"
-              >
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut />
+                  Sair
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
