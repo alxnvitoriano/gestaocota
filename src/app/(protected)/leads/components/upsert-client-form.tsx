@@ -1,0 +1,159 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { upsertClient } from "@/app/actions/upsert-client";
+import { upsertClientSchema } from "@/app/actions/upsert-client/schema";
+import { Button } from "@/components/ui/button";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { clientsTable } from "@/db/schema";
+
+interface UpsertClientFormProps {
+  isOpen: boolean;
+  client?: typeof clientsTable.$inferSelect;
+  onSuccess?: () => void;
+}
+
+const UpsertClientForm = ({
+  client,
+  onSuccess,
+  isOpen,
+}: UpsertClientFormProps) => {
+  const form = useForm<z.infer<typeof upsertClientSchema>>({
+    shouldUnregister: true,
+    resolver: zodResolver(upsertClientSchema),
+    defaultValues: {
+      name: client?.name || "",
+      cpf: client?.cpf || "",
+    },
+  });
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        name: client?.name || "",
+        cpf: client?.cpf || "",
+      });
+    }
+  }, [isOpen, form, client]);
+
+  const upsertClientAction = useAction(upsertClient, {
+    onSuccess: () => {
+      toast.success(
+        client?.id
+          ? "Cliente atualizado com sucesso"
+          : "Cliente adicionado com sucesso",
+      );
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error(
+        client?.id ? "Erro ao atualizar cliente" : "Erro ao adicionar cliente",
+      );
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof upsertClientSchema>) => {
+    upsertClientAction.execute({
+      ...values,
+      id: client?.id,
+      propertyValue: values.propertyValue * 100,
+      desiredInstallment: values.desiredInstallment * 100,
+      income: values.income * 100,
+      downPaymentCash: values.downPaymentCash * 100,
+      downPaymentFgts: values.downPaymentFgts * 100,
+    });
+  };
+
+  return (
+    <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogHeader>
+        <DialogTitle>
+          {client?.id ? "Editar cliente" : "Adicionar cliente"}
+        </DialogTitle>
+        <DialogDescription>
+          {client?.id
+            ? "Edite as informações do cliente"
+            : "Adicione um novo cliente"}
+        </DialogDescription>
+      </DialogHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              name="name"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome do cliente</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Digite o nome completo" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              name="cpf"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <PatternFormat
+                      customInput={Input}
+                      format="###.###.###-##"
+                      mask="_"
+                      placeholder="000.000.000-00"
+                      value={field.value ?? ""}
+                      onValueChange={(value) => {
+                        field.onChange(value.value);
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <DialogFooter>
+            <Button type="submit" disabled={upsertClientAction.isPending}>
+              {upsertClientAction.isExecuting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : client?.id ? (
+                "Atualizar"
+              ) : (
+                "Adicionar"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </DialogContent>
+  );
+};
+
+export default UpsertClientForm;
