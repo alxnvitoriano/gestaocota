@@ -357,4 +357,8 @@ export const schema = {
   generalManagerRelations,
   managerRelations,
   memberRelations,
+  // Added missing tables and relations for typed relational queries
+  usersToCompanyTable,
+  usersToCompanyRelation,
+  companyTableRelations,
 };
