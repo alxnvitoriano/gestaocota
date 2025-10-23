@@ -3,15 +3,10 @@
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import {
-  BadgeCheckIcon,
-  BookmarkCheck,
-  CalendarDays,
-  CheckCheck,
   CircleCheckIcon,
   HandCoins,
   LayoutDashboard,
   LogOut,
-  ShieldCheck,
   UsersIcon,
   UsersRound,
 } from "lucide-react";
@@ -45,9 +40,9 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "Leads",
-    url: "/leads",
-    icon: UsersIcon,
+    title: "Captadores",
+    url: "/pickup",
+    icon: UsersRound,
   },
   {
     title: "Vendedores",
@@ -55,39 +50,14 @@ const items = [
     icon: HandCoins,
   },
   {
-    title: "Lev. Necessidade",
-    url: "/clients",
-    icon: UsersRound,
+    title: "Leads",
+    url: "/leads",
+    icon: UsersIcon,
   },
   {
     title: "Negociação",
     url: "/negotiations",
     icon: CircleCheckIcon,
-  },
-  {
-    title: "Análise",
-    url: "/analysis",
-    icon: CheckCheck,
-  },
-  {
-    title: "Agendamentos",
-    url: "/appointments",
-    icon: CalendarDays,
-  },
-  {
-    title: "Fechamento",
-    url: "/closures",
-    icon: BookmarkCheck,
-  },
-  {
-    title: "Controle Qual.",
-    url: "/quality-control",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Resultado Assembléia",
-    url: "/assemblies",
-    icon: BadgeCheckIcon,
   },
 ];
 
