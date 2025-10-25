@@ -39,7 +39,7 @@ export const getClientsTableColumns = (
   {
     id: "desire",
     accessorKey: "desire",
-    header: "Desire",
+    header: "Desejo",
   },
   {
     id: "entrance",
