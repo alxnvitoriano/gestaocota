@@ -1,0 +1,14 @@
+import { z } from "zod";
+
+export const upsertNegotiationSchema = z.object({
+  id: z.string().uuid().optional(), // Para edição
+  clientId: z.string().uuid("Cliente é obrigatório"),
+  salespersonId: z.string().uuid("Vendedor é obrigatório"),
+  negociationStatus: z.enum(["pending", "accepted", "rejected"]),
+  negociationValue: z
+    .number()
+    .min(0, "Valor da negociação deve ser maior ou igual a zero"),
+  negociationResult: z.string().optional(),
+});
+
+export type UpsertNegotiationSchema = z.infer<typeof upsertNegotiationSchema>;
