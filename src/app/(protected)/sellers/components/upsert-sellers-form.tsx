@@ -25,21 +25,29 @@ import {
 } from "@/components/ui/form";
 import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { salespersonTable } from "@/db/schema";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { pickupTable, salespersonTable } from "@/db/schema";
 
-const formSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório"),
-});
+// Use shared schema for consistency
+const formSchema = upsertSellerSchema;
 
 interface UpsertSellersProps {
   isOpen: boolean;
   seller?: typeof salespersonTable.$inferSelect;
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   onSuccess?: () => void;
 }
 
 const UpsertSellersForm = ({
   isOpen,
   seller,
+  pickups,
   onSuccess,
 }: UpsertSellersProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -47,6 +55,8 @@ const UpsertSellersForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller?.name || "",
+      pickupId: seller?.pickupId || "",
+      id: seller?.id || undefined,
     },
   });
 
@@ -59,11 +69,12 @@ const UpsertSellersForm = ({
       );
       onSuccess?.();
     },
-    onError: () => {
+    onError: ({ error }) => {
       toast.error(
-        seller?.id
-          ? "Erro ao atualizar vendedor"
-          : "Erro ao adicionar vendedor",
+        error.serverError ||
+          (seller?.id
+            ? "Erro ao atualizar vendedor"
+            : "Erro ao adicionar vendedor"),
       );
     },
   });
@@ -71,6 +82,8 @@ const UpsertSellersForm = ({
     if (isOpen) {
       form.reset({
         name: seller?.name || "",
+        pickupId: seller?.pickupId || "",
+        id: seller?.id || undefined,
       });
     }
   }, [isOpen, form, seller]);
@@ -85,8 +98,14 @@ const UpsertSellersForm = ({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar vendedor</DialogTitle>
-        <DialogDescription>Adicione um novo vendedor</DialogDescription>
+        <DialogTitle>
+          {seller?.id ? "Editar vendedor" : "Adicionar vendedor"}
+        </DialogTitle>
+        <DialogDescription>
+          {seller?.id
+            ? "Atualize os dados do vendedor"
+            : "Adicione um novo vendedor"}
+        </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -99,6 +118,31 @@ const UpsertSellersForm = ({
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="pickupId"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Captador</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um captador" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {pickups.map((pickup) => (
+                      <SelectItem key={pickup.id} value={pickup.id}>
+                        {pickup.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

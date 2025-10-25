@@ -67,11 +67,6 @@ export function DashboardClient({
       icon: Briefcase,
     },
     {
-      title: "Agendamentos",
-      value: metrics.appointmentsCount.toString(),
-      icon: Users,
-    },
-    {
       title: "Fechamentos",
       value: metrics.closingsCount.toString(),
       icon: Briefcase,

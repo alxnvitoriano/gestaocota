@@ -193,6 +193,10 @@ export const salespersonTable = pgTable("salesperson", {
   companyId: uuid("company_id").references(() => companyTable.id, {
     onDelete: "cascade",
   }),
+  // Added relation to pickup (captador)
+  pickupId: uuid("pickup_id").references(() => pickupTable.id, {
+    onDelete: "set null",
+  }),
   name: text("name").notNull(),
   avatarImageUrl: text("avatar_image_url"),
   availableFromTime: text("available_from_time").default("08:00"),
@@ -207,6 +211,11 @@ export const salespersonRelations = relations(salespersonTable, ({ one }) => ({
   company: one(companyTable, {
     fields: [salespersonTable.companyId],
     references: [companyTable.id],
+  }),
+  // Relation to pickup (captador)
+  pickup: one(pickupTable, {
+    fields: [salespersonTable.pickupId],
+    references: [pickupTable.id],
   }),
 }));
 

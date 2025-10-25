@@ -19,15 +19,16 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { salespersonTable } from "@/db/schema";
+import { pickupTable, salespersonTable } from "@/db/schema";
 
 import UpsertSellersForm from "./upsert-sellers-form";
 
 interface SellerCardProps {
   seller: typeof salespersonTable.$inferSelect;
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
 }
 
-const SellerCard = ({ seller }: SellerCardProps) => {
+const SellerCard = ({ seller, pickups }: SellerCardProps) => {
   const sellerInitials = seller.name
     .split(" ")
     .map((name) => name[0])
@@ -70,6 +71,7 @@ const SellerCard = ({ seller }: SellerCardProps) => {
           <UpsertSellersForm
             seller={{ ...seller, avatarImageUrl: null }}
             isOpen={true}
+            pickups={pickups}
           />
         </Dialog>
         {seller && (
