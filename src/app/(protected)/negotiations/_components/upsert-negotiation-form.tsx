@@ -82,6 +82,7 @@ const UpsertNegociationForm = ({
       negociationStatus: defaultStatus,
       negociationResult: negociation?.negociationResult || undefined,
       negociationValue: negociation?.negociationValue || 0,
+      administrator: undefined,
     },
   });
 
@@ -245,6 +246,30 @@ const UpsertNegociationForm = ({
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="administrator"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Administradora</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione uma administradora" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Evoy">Evoy</SelectItem>
+                        <SelectItem value="Alpha">Alpha</SelectItem>
+                        <SelectItem value="Reserva">Reserva</SelectItem>
+                        <SelectItem value="Eutbem">Eutbem</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
