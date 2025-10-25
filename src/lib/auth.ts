@@ -18,8 +18,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "http://localhost:3001",
-    "https://consorcioap.com.br",
-    "https://www.consorcioap.com.br",
+    "https://gestaocota.com.br",
+    "https://www.gestaocota.com.br",
   ],
 
   database: drizzleAdapter(db, {
