@@ -236,7 +236,7 @@ const UpsertClientForm = ({
                     <NumericFormat
                       customInput={Input}
                       thousandSeparator="."
-                      decimalSeparator="," 
+                      decimalSeparator=","
                       allowNegative={false}
                       decimalScale={2}
                       fixedDecimalScale

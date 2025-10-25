@@ -130,7 +130,7 @@ const UpsertNegociationForm = ({
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="clientId"
@@ -158,7 +158,7 @@ const UpsertNegociationForm = ({
                   <FormLabel>Vendedor</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione um vendedor" />
                       </SelectTrigger>
                     </FormControl>
@@ -176,7 +176,7 @@ const UpsertNegociationForm = ({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="negociationValue"
@@ -187,7 +187,7 @@ const UpsertNegociationForm = ({
                     <NumericFormat
                       customInput={Input}
                       thousandSeparator="."
-                      decimalSeparator=","
+                      decimalSeparator="," 
                       prefix="R$ "
                       decimalScale={2}
                       fixedDecimalScale
@@ -216,7 +216,7 @@ const UpsertNegociationForm = ({
                         field.onChange(val as NegotiationStatus)
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -232,7 +232,7 @@ const UpsertNegociationForm = ({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="negociationResult"
@@ -260,7 +260,7 @@ const UpsertNegociationForm = ({
                   <FormLabel>Administradora</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione uma administradora" />
                       </SelectTrigger>
                       <SelectContent>
