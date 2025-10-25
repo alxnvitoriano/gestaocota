@@ -33,6 +33,11 @@ export const upsertClient = actionClient
         .set({
           name: parsedInput.name,
           cpf: parsedInput.cpf,
+          indication: parsedInput.indication,
+          annuncio: parsedInput.annuncio,
+          desire: parsedInput.desire,
+          entrance: parsedInput.entranceValue,
+          phone: parsedInput.phone,
         })
         .where(eq(clientsTable.id, parsedInput.id));
     } else {
@@ -40,9 +45,14 @@ export const upsertClient = actionClient
       await db.insert(clientsTable).values({
         name: parsedInput.name,
         cpf: parsedInput.cpf,
+        indication: parsedInput.indication,
+        annuncio: parsedInput.annuncio,
+        desire: parsedInput.desire,
+        entrance: parsedInput.entranceValue,
+        phone: parsedInput.phone,
         companyId: session.user.company.id,
       });
     }
 
-    revalidatePath("/clients");
+    revalidatePath("/leads");
   });

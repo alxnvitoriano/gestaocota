@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  integer,
   pgEnum,
   pgTable,
   text,
@@ -257,6 +258,9 @@ export const pickupTable = pgTable("pickup", {
   companyId: uuid("company_id").references(() => companyTable.id, {
     onDelete: "cascade",
   }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   avatarImageUrl: text("avatar_image_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -270,6 +274,10 @@ export const pickupRelations = relations(pickupTable, ({ one }) => ({
     fields: [pickupTable.companyId],
     references: [companyTable.id],
   }),
+  user: one(usersTable, {
+    fields: [pickupTable.userId],
+    references: [usersTable.id],
+  }),
 }));
 
 export const clientsTable = pgTable("clients", {
@@ -280,6 +288,10 @@ export const clientsTable = pgTable("clients", {
   name: text("name").notNull(),
   cpf: text("cpf").notNull(),
   indication: text("indication"),
+  annuncio: text("annuncio"),
+  desire: text("desire"),
+  entrance: integer("entrance_value"),
+  phone: text("phone"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -292,6 +304,44 @@ export const clientsRelations = relations(clientsTable, ({ one }) => ({
     references: [companyTable.id],
   }),
 }));
+
+export const negociationsTable = pgTable("negociations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  companyId: uuid("company_id").references(() => companyTable.id, {
+    onDelete: "cascade",
+  }),
+  clientId: uuid("client_id").references(() => clientsTable.id, {
+    onDelete: "cascade",
+  }),
+  salespersonId: uuid("salesperson_id").references(() => salespersonTable.id, {
+    onDelete: "cascade",
+  }),
+  negociationStatus: text("negociation_status").default("pending").notNull(),
+  negociationResult: text("negociation_result"),
+  negociationValue: integer("negociation_value"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
+export const negociationsRelations = relations(
+  negociationsTable,
+  ({ one }) => ({
+    company: one(companyTable, {
+      fields: [negociationsTable.companyId],
+      references: [companyTable.id],
+    }),
+    client: one(clientsTable, {
+      fields: [negociationsTable.clientId],
+      references: [clientsTable.id],
+    }),
+    salesperson: one(salespersonTable, {
+      fields: [negociationsTable.salespersonId],
+      references: [salespersonTable.id],
+    }),
+  }),
+);
 
 export const appointmentsTable = pgTable("appointments", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -341,6 +391,8 @@ export const appointmentsRelations = relations(
 
 export const schema = {
   usersTable,
+  negociationsTable,
+  negociationsRelations,
   sessionsTable,
   accountsTable,
   verificationsTable,
@@ -352,11 +404,13 @@ export const schema = {
   salespersonTable,
   generalManagerTable,
   managerTable,
+  pickupTable,
   appointmentsRelations,
   salespersonRelations,
   generalManagerRelations,
   managerRelations,
   memberRelations,
+  pickupRelations,
   // Added missing tables and relations for typed relational queries
   usersToCompanyTable,
   usersToCompanyRelation,
