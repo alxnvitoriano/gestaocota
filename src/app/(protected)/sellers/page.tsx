@@ -1,7 +1,9 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import {
   PageActions,
   PageContainer,
@@ -25,16 +27,34 @@ const SellersPage = async () => {
   if (!session?.user) {
     redirect("/authentication");
   }
-  if (!session.user.company) {
-    redirect("/company-form");
+
+  const companyId = session.user.company?.id;
+  if (!companyId) {
+    return (
+      <PageContainer>
+        <PageHeader>
+          <PageHeaderContent>
+            <PageTitle>Vendedores</PageTitle>
+            <PageDescription>
+              Nenhuma empresa ativa. Crie uma empresa para gerenciar vendedores.
+            </PageDescription>
+          </PageHeaderContent>
+        </PageHeader>
+        <PageContent>
+          <Link href="/company-form">
+            <Button>Criar Empresa</Button>
+          </Link>
+        </PageContent>
+      </PageContainer>
+    );
   }
 
   const sellers = await db.query.salespersonTable.findMany({
-    where: eq(salespersonTable.companyId, session.user.company.id),
+    where: eq(salespersonTable.companyId, companyId),
   });
 
   const pickups = await db.query.pickupTable.findMany({
-    where: eq(pickupTable.companyId, session.user.company.id),
+    where: eq(pickupTable.companyId, companyId),
     columns: { id: true, name: true },
   });
 
