@@ -40,6 +40,11 @@ const items = [
     icon: LayoutDashboard,
   },
   {
+    title: "Equipe",
+    url: "/team",
+    icon: UsersRound,
+  },
+  {
     title: "Captadores",
     url: "/pickup",
     icon: UsersRound,
