@@ -57,12 +57,12 @@ export function DashboardClient({
 
   const pickupColumns: ColumnDef<PickupRow>[] = [
     { accessorKey: "name", header: "Captador" },
-    { accessorKey: "leads", header: "Leads (agendamentos)" },
+    { accessorKey: "leads", header: "Leads" },
   ];
 
   const statCards = [
     {
-      title: "Cotação vendida",
+      title: "Cotas vendidas",
       value: metrics.soldQuotationsCount.toString(),
       icon: Briefcase,
     },
@@ -85,11 +85,6 @@ export function DashboardClient({
       title: "Não fecharam",
       value: metrics.rejectedCount.toString(),
       icon: Briefcase,
-    },
-    {
-      title: "Conversão geral",
-      value: `${metrics.generalConversion}%`,
-      icon: TrendingUp,
     },
     {
       title: "Conversão de leads",

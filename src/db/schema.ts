@@ -285,6 +285,9 @@ export const clientsTable = pgTable("clients", {
   companyId: uuid("company_id").references(() => companyTable.id, {
     onDelete: "cascade",
   }),
+  pickupId: uuid("pickup_id").references(() => pickupTable.id, {
+    onDelete: "set null",
+  }),
   name: text("name").notNull(),
   cpf: text("cpf").notNull(),
   indication: text("indication"),
@@ -302,6 +305,10 @@ export const clientsRelations = relations(clientsTable, ({ one }) => ({
   company: one(companyTable, {
     fields: [clientsTable.companyId],
     references: [companyTable.id],
+  }),
+  pickup: one(pickupTable, {
+    fields: [clientsTable.pickupId],
+    references: [pickupTable.id],
   }),
 }));
 

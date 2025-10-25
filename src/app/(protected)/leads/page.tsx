@@ -12,7 +12,7 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 import { db } from "@/db";
-import { clientsTable } from "@/db/schema";
+import { clientsTable, pickupTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddClientButton from "./components/add-client-button";
@@ -33,6 +33,11 @@ const ClientsPage = async () => {
     where: eq(clientsTable.companyId, session.user.company.id),
   });
 
+  const pickups = await db.query.pickupTable.findMany({
+    where: eq(pickupTable.companyId, session.user.company.id),
+    columns: { id: true, name: true },
+  });
+
   // Transformar os dados para o formato esperado pelo componente
   const formattedClients = clients.map((client) => ({
     ...client,
@@ -51,13 +56,14 @@ const ClientsPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddClientButton />
+          <AddClientButton pickups={pickups} />
         </PageActions>
       </PageHeader>
       <PageContent>
         <ClientsClient
           clients={formattedClients}
           companyId={session.user.company.id}
+          pickups={pickups}
         />
       </PageContent>
     </PageContainer>

@@ -17,6 +17,7 @@ export const upsertClientSchema = z.object({
     .number()
     .int()
     .min(0, "Valor da entrada em espécie deve ser maior ou igual a zero"),
+  pickupId: z.string().uuid({ message: "Selecione um captador válido" }),
 });
 
 export type UpsertClientSchema = z.infer<typeof upsertClientSchema>;

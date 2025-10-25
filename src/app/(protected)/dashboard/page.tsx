@@ -33,7 +33,7 @@ export default async function Page() {
   const [clients, appointments, pickups, sellers, negociations] = await Promise.all([
     db.query.clientsTable.findMany({
       where: eq(clientsTable.companyId, companyId),
-      columns: { id: true },
+      columns: { id: true, pickupId: true },
     }),
     db.query.appointmentsTable.findMany({
       where: eq(appointmentsTable.companyId, companyId),
@@ -103,7 +103,7 @@ export default async function Page() {
   });
 
   const pickupStats = pickups.map((p) => {
-    const pLeads = appointments.filter((a) => a.pickupId === p.id).length;
+    const pLeads = clients.filter((c) => c.pickupId === p.id).length;
     return { id: p.id, name: p.name, leads: pLeads };
   });
 

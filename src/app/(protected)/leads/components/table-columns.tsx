@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { clientsTable } from "@/db/schema";
+import { clientsTable, pickupTable } from "@/db/schema";
 
 import ClientsTableActions from "./table-actions";
 
@@ -13,9 +13,9 @@ function formatCurrency(cents: number) {
   });
 }
 
-export const clientsTableColumns: ColumnDef<
-  typeof clientsTable.$inferSelect
->[] = [
+export const getClientsTableColumns = (
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[],
+): ColumnDef<typeof clientsTable.$inferSelect>[] => [
   {
     id: "name",
     accessorKey: "name",
@@ -54,7 +54,7 @@ export const clientsTableColumns: ColumnDef<
     id: "actions",
     cell: (params) => {
       const client = params.row.original;
-      return <ClientsTableActions client={client} />;
+      return <ClientsTableActions client={client} pickups={pickups} />;
     },
   },
 ];

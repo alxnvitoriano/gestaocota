@@ -13,15 +13,16 @@ import {
 } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { clientsTable } from "@/db/schema";
+import { clientsTable, pickupTable } from "@/db/schema";
 
 import UpsertClientForm from "./upsert-client-form";
 
 interface ClientCardProps {
   client: typeof clientsTable.$inferSelect;
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
 }
 
-const ClientCard = ({ client }: ClientCardProps) => {
+const ClientCard = ({ client, pickups }: ClientCardProps) => {
   const [open, setOpen] = useState(false);
 
   const clientInitials = client.name
@@ -69,6 +70,7 @@ const ClientCard = ({ client }: ClientCardProps) => {
           </DialogTrigger>
           <UpsertClientForm
             client={client}
+            pickups={pickups}
             onSuccess={handleSuccess}
             isOpen={open}
           />

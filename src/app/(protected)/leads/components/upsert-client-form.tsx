@@ -29,16 +29,25 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { clientsTable } from "@/db/schema";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { clientsTable, pickupTable } from "@/db/schema";
 
 interface UpsertClientFormProps {
   isOpen: boolean;
   client?: typeof clientsTable.$inferSelect;
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   onSuccess?: () => void;
 }
 
 const UpsertClientForm = ({
   client,
+  pickups,
   onSuccess,
   isOpen,
 }: UpsertClientFormProps) => {
@@ -53,6 +62,7 @@ const UpsertClientForm = ({
       desire: client?.desire || "",
       entranceValue: client?.entrance ? client.entrance / 100 : 0,
       phone: client?.phone || "",
+      pickupId: client?.pickupId || (pickups[0]?.id ?? undefined),
     },
   });
   useEffect(() => {
@@ -64,9 +74,10 @@ const UpsertClientForm = ({
         desire: client?.desire || "",
         entranceValue: client?.entrance ? client.entrance / 100 : 0,
         phone: client?.phone || "",
+        pickupId: client?.pickupId || (pickups[0]?.id ?? undefined),
       });
     }
-  }, [isOpen, form, client]);
+  }, [isOpen, form, client, pickups]);
 
   const upsertClientAction = useAction(upsertClient, {
     onSuccess: () => {
@@ -223,7 +234,7 @@ const UpsertClientForm = ({
                     <NumericFormat
                       customInput={Input}
                       thousandSeparator="."
-                      decimalSeparator=","
+                      decimalSeparator="," 
                       allowNegative={false}
                       decimalScale={2}
                       fixedDecimalScale
@@ -235,6 +246,30 @@ const UpsertClientForm = ({
                       }}
                       onBlur={field.onBlur}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="pickupId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Captador</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um captador" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {pickups.map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
