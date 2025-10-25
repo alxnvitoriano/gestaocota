@@ -57,6 +57,7 @@ const UpsertClientForm = ({
     resolver: zodResolver(upsertClientSchema),
     defaultValues: {
       name: client?.name || "",
+      cpf: client?.cpf || "",
       indication: client?.indication || "",
       annuncio: client?.annuncio || "",
       desire: client?.desire || "",
@@ -69,6 +70,7 @@ const UpsertClientForm = ({
     if (isOpen) {
       form.reset({
         name: client?.name || "",
+        cpf: client?.cpf || "",
         indication: client?.indication || "",
         annuncio: client?.annuncio || "",
         desire: client?.desire || "",
