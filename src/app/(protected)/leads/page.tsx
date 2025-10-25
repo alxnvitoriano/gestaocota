@@ -5,17 +5,18 @@ import { redirect } from "next/navigation";
 import {
   PageActions,
   PageContainer,
+  PageContent,
   PageDescription,
   PageHeader,
   PageHeaderContent,
   PageTitle,
 } from "@/components/ui/page-container";
-import { Table, TableHeader } from "@/components/ui/table";
 import { db } from "@/db";
 import { clientsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddClientButton from "./components/add-client-button";
+import { ClientsClient } from "./components/clients-client";
 
 const ClientsPage = async () => {
   const session = await auth.api.getSession({
@@ -24,16 +25,18 @@ const ClientsPage = async () => {
   if (!session?.user) {
     redirect("/authentication");
   }
+  if (!session.user.company) {
+    redirect("/company-form");
+  }
 
   const clients = await db.query.clientsTable.findMany({
-    where: session.user.company
-      ? eq(clientsTable.companyId, session.user.company.id)
-      : undefined,
+    where: eq(clientsTable.companyId, session.user.company.id),
   });
 
   // Transformar os dados para o formato esperado pelo componente
   const formattedClients = clients.map((client) => ({
     ...client,
+    entrance: client.entrance ?? 0,
     createdAt: client.createdAt.toISOString(),
     updatedAt: client.updatedAt?.toISOString() || null,
   }));
@@ -50,14 +53,13 @@ const ClientsPage = async () => {
         <PageActions>
           <AddClientButton />
         </PageActions>
-        <Table>
-          <TableHeader>
-            {formattedClients.map((client) => (
-              <TableHeader key={client.id}>{client.name}</TableHeader>
-            ))}
-          </TableHeader>
-        </Table>
       </PageHeader>
+      <PageContent>
+        <ClientsClient
+          clients={formattedClients}
+          companyId={session.user.company.id}
+        />
+      </PageContent>
     </PageContainer>
   );
 };

@@ -2,10 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { PatternFormat } from "react-number-format";
+import { NumericFormat, PatternFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -41,19 +42,28 @@ const UpsertClientForm = ({
   onSuccess,
   isOpen,
 }: UpsertClientFormProps) => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof upsertClientSchema>>({
     shouldUnregister: true,
     resolver: zodResolver(upsertClientSchema),
     defaultValues: {
       name: client?.name || "",
-      cpf: client?.cpf || "",
+      indication: client?.indication || "",
+      annuncio: client?.annuncio || "",
+      desire: client?.desire || "",
+      entranceValue: client?.entrance ? client.entrance / 100 : 0,
+      phone: client?.phone || "",
     },
   });
   useEffect(() => {
     if (isOpen) {
       form.reset({
         name: client?.name || "",
-        cpf: client?.cpf || "",
+        indication: client?.indication || "",
+        annuncio: client?.annuncio || "",
+        desire: client?.desire || "",
+        entranceValue: client?.entrance ? client.entrance / 100 : 0,
+        phone: client?.phone || "",
       });
     }
   }, [isOpen, form, client]);
@@ -65,6 +75,7 @@ const UpsertClientForm = ({
           ? "Cliente atualizado com sucesso"
           : "Cliente adicionado com sucesso",
       );
+      router.refresh();
       onSuccess?.();
     },
     onError: () => {
@@ -78,11 +89,13 @@ const UpsertClientForm = ({
     upsertClientAction.execute({
       ...values,
       id: client?.id,
-      propertyValue: values.propertyValue * 100,
-      desiredInstallment: values.desiredInstallment * 100,
-      income: values.income * 100,
-      downPaymentCash: values.downPaymentCash * 100,
-      downPaymentFgts: values.downPaymentFgts * 100,
+      name: values.name,
+      entranceValue: values.entranceValue * 100,
+      desire: values.desire,
+      annuncio: values.annuncio,
+      indication: values.indication,
+      cpf: values.cpf,
+      phone: values.phone,
     });
   };
 
@@ -130,6 +143,95 @@ const UpsertClientForm = ({
                       value={field.value ?? ""}
                       onValueChange={(value) => {
                         field.onChange(value.value);
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="phone"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <PatternFormat
+                      customInput={Input}
+                      format="(##) #####-####"
+                      mask="_"
+                      placeholder="(00) 00000-0000"
+                      value={field.value ?? ""}
+                      onValueChange={(value) => {
+                        field.onChange(value.value);
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="indication"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Indicação</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Indicação" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="annuncio"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Anúncio</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Anúncio" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="desire"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Desejo</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Desejo do cliente..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="entranceValue"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Entrada (R$)</FormLabel>
+                  <FormControl>
+                    <NumericFormat
+                      customInput={Input}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      placeholder="0,00"
+                      value={field.value ?? 0}
+                      onValueChange={(values) => {
+                        const raw = Number(values.value || 0);
+                        field.onChange(raw);
                       }}
                       onBlur={field.onBlur}
                     />
