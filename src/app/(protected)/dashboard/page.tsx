@@ -1,8 +1,11 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import {
+  PageActions,
   PageContainer,
   PageContent,
   PageDescription,
@@ -26,38 +29,62 @@ export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user) redirect("/authentication");
-  if (!session.user.company?.id) redirect("/company-form");
 
-  const companyId = session.user.company.id;
+  const companyId = session.user.company?.id;
+  if (!companyId) {
+    return (
+      <PageContainer>
+        <PageHeader>
+          <PageHeaderContent>
+            <PageTitle>Dashboard</PageTitle>
+            <PageDescription>
+              Resumo de performance e atividades.
+            </PageDescription>
+          </PageHeaderContent>
+          <PageActions>
+            <Link href="/company-form">
+              <Button>Criar Empresa</Button>
+            </Link>
+          </PageActions>
+        </PageHeader>
+        <PageContent>
+          <p className="text-muted-foreground">
+            Nenhuma empresa ativa. Crie uma empresa para visualizar métricas.
+          </p>
+        </PageContent>
+      </PageContainer>
+    );
+  }
 
-  const [clients, appointments, pickups, sellers, negociations] = await Promise.all([
-    db.query.clientsTable.findMany({
-      where: eq(clientsTable.companyId, companyId),
-      columns: { id: true, pickupId: true },
-    }),
-    db.query.appointmentsTable.findMany({
-      where: eq(appointmentsTable.companyId, companyId),
-      columns: { id: true, pickupId: true },
-    }),
-    db.query.pickupTable.findMany({
-      where: eq(pickupTable.companyId, companyId),
-      columns: { id: true, name: true },
-    }),
-    db.query.salespersonTable.findMany({
-      where: eq(salespersonTable.companyId, companyId),
-      columns: { id: true, name: true },
-    }),
-    db.query.negociationsTable.findMany({
-      where: eq(negociationsTable.companyId, companyId),
-      columns: {
-        id: true,
-        clientId: true,
-        salespersonId: true,
-        negociationStatus: true,
-        negociationValue: true,
-      },
-    }),
-  ]);
+  const [clients, appointments, pickups, sellers, negociations] =
+    await Promise.all([
+      db.query.clientsTable.findMany({
+        where: eq(clientsTable.companyId, companyId),
+        columns: { id: true, pickupId: true },
+      }),
+      db.query.appointmentsTable.findMany({
+        where: eq(appointmentsTable.companyId, companyId),
+        columns: { id: true, pickupId: true },
+      }),
+      db.query.pickupTable.findMany({
+        where: eq(pickupTable.companyId, companyId),
+        columns: { id: true, name: true },
+      }),
+      db.query.salespersonTable.findMany({
+        where: eq(salespersonTable.companyId, companyId),
+        columns: { id: true, name: true },
+      }),
+      db.query.negociationsTable.findMany({
+        where: eq(negociationsTable.companyId, companyId),
+        columns: {
+          id: true,
+          clientId: true,
+          salespersonId: true,
+          negociationStatus: true,
+          negociationValue: true,
+        },
+      }),
+    ]);
 
   const totalNegotiations = negociations.length;
   const acceptedNegotiations = negociations.filter(
@@ -126,6 +153,11 @@ export default async function Page() {
           <PageTitle>Dashboard</PageTitle>
           <PageDescription>Resumo de performance e atividades.</PageDescription>
         </PageHeaderContent>
+        <PageActions>
+          <Link href="/company-form">
+            <Button>Criar Empresa</Button>
+          </Link>
+        </PageActions>
       </PageHeader>
       <PageContent>
         <DashboardClient
