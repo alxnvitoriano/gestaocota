@@ -42,6 +42,15 @@ export const getClientsTableColumns = (
     header: "Desejo",
   },
   {
+    id: "pickup",
+    header: "Captador",
+    cell: ({ row }) => {
+      const pickupName =
+        pickups.find((p) => p.id === row.original.pickupId)?.name ?? "—";
+      return pickupName;
+    },
+  },
+  {
     id: "entrance",
     accessorKey: "entrance",
     header: "Entrada",

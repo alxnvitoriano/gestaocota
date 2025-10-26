@@ -1,9 +1,14 @@
 "use server";
 
-import { and, eq, ilike, SQL } from "drizzle-orm";
+import { and, eq, ilike, or, SQL } from "drizzle-orm";
 
 import { db } from "@/db";
-import { clientsTable, negociationsTable, salespersonTable } from "@/db/schema";
+import {
+  clientsTable,
+  negociationsTable,
+  pickupTable,
+  salespersonTable,
+} from "@/db/schema";
 import { actionClient } from "@/lib/safe-action";
 
 import { searchNegotiationsSchema } from "./schema";
@@ -19,7 +24,11 @@ export const searchNegociationsAction = actionClient
     if (searchTerm && searchTerm.trim() !== "") {
       whereCondition = and(
         eq(negociationsTable.companyId, companyId),
-        ilike(clientsTable.name, `%${searchTerm}%`),
+        or(
+          ilike(clientsTable.name, `%${searchTerm}%`),
+          ilike(salespersonTable.name, `%${searchTerm}%`),
+          ilike(pickupTable.name, `%${searchTerm}%`),
+        ),
       )!;
     }
 
@@ -41,6 +50,7 @@ export const searchNegociationsAction = actionClient
         salespersonTable,
         eq(negociationsTable.salespersonId, salespersonTable.id),
       )
+      .leftJoin(pickupTable, eq(clientsTable.pickupId, pickupTable.id))
       .where(whereCondition)
       .orderBy(negociationsTable.createdAt);
 

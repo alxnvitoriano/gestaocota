@@ -77,7 +77,7 @@ export function NegociationsClient({
     <>
       <div className="mb-4">
         <SearchFilter
-          placeholder="Buscar por nome do cliente..."
+          placeholder="Buscar por cliente ou captador..."
           onSearch={handleSearch}
           className="max-w-md"
         />

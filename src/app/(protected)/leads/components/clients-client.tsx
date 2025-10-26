@@ -4,6 +4,14 @@
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { pickupTable } from "@/db/schema";
 
 // import { searchClientsAction } from "@actions/search-clients";
@@ -32,8 +40,14 @@ interface ClientsClientProps {
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
 }
 
-export function ClientsClient({ clients /*companyId*/, pickups }: ClientsClientProps) {
+export function ClientsClient({
+  clients /*companyId*/,
+  pickups,
+}: ClientsClientProps) {
   const [filteredClients, setFilteredClients] = useState<Client[]>(clients);
+  const [selectedPickupId, setSelectedPickupId] = useState<string | undefined>(
+    undefined,
+  );
 
   //   const { execute: searchClients } = useAction(searchClientsAction, {
   // onSuccess: ({ data }) => {
@@ -53,6 +67,17 @@ export function ClientsClient({ clients /*companyId*/, pickups }: ClientsClientP
     setFilteredClients(clients);
   }, [clients]);
 
+  // Filtrar por captador selecionado
+  useEffect(() => {
+    if (!selectedPickupId || selectedPickupId === "") {
+      setFilteredClients(clients);
+    } else {
+      setFilteredClients(
+        clients.filter((c) => c.pickupId === selectedPickupId),
+      );
+    }
+  }, [selectedPickupId, clients]);
+
   //   const handleSearch = (searchTerm: string) => {
   //     searchClients({
   //       companyId,
@@ -62,6 +87,27 @@ export function ClientsClient({ clients /*companyId*/, pickups }: ClientsClientP
 
   return (
     <>
+      {/* Filtro por captador */}
+      <div className="mb-4 flex items-center gap-2">
+        <Label htmlFor="pickup-filter">Captador</Label>
+        <Select
+          value={selectedPickupId ?? ""}
+          onValueChange={(value) => setSelectedPickupId(value || undefined)}
+        >
+          <SelectTrigger id="pickup-filter" className="w-full max-w-xs">
+            <SelectValue placeholder="Filtrar por captador" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos</SelectItem>
+            {pickups.map((p) => (
+              <SelectItem key={p.id} value={p.id}>
+                {p.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* <div className="mb-4">
         <SearchFilter
           placeholder="Buscar por nome ou CPF..."
