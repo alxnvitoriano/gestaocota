@@ -91,14 +91,16 @@ export function ClientsClient({
       <div className="mb-4 flex items-center gap-2">
         <Label htmlFor="pickup-filter">Captador</Label>
         <Select
-          value={selectedPickupId ?? ""}
-          onValueChange={(value) => setSelectedPickupId(value || undefined)}
+          value={selectedPickupId ?? "all"}
+          onValueChange={(value) =>
+            setSelectedPickupId(value === "all" ? undefined : value)
+          }
         >
           <SelectTrigger id="pickup-filter" className="w-full max-w-xs">
             <SelectValue placeholder="Filtrar por captador" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             {pickups.map((p) => (
               <SelectItem key={p.id} value={p.id}>
                 {p.name}
