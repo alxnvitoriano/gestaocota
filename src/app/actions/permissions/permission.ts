@@ -75,3 +75,34 @@ export const canRemoveMembers = async (companyId: string) => {
     };
   }
 };
+
+export const canUpdateMemberRole = async (companyId: string) => {
+  try {
+    const session = await getCurrentUser();
+
+    const userMember = await db.query.member.findFirst({
+      where: (member, { and, eq }) =>
+        and(eq(member.userId, session.user.id), eq(member.companyId, companyId)),
+    });
+
+    if (!userMember) {
+      return {
+        success: false,
+        error: "Usuário não é membro desta empresa",
+      };
+    }
+
+    const hasPermission = userMember.role === "general_manager";
+
+    return {
+      success: hasPermission,
+      error: hasPermission ? null : "Apenas gerente geral pode alterar cargos",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      error: "Falha ao verificar permissão",
+    };
+  }
+};

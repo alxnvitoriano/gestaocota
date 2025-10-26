@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { getCompanies } from "@/app/actions/get-companies";
+import { canUpdateMemberRole } from "@/app/actions/permissions/permission";
 import {
   PageContainer,
   PageContent,
@@ -46,6 +47,10 @@ const TeamPage = async () => {
     orderBy: (member, { asc }) => [asc(member.createdAt)],
   });
 
+  // Verificar se o usuário logado pode editar cargos (apenas gerente geral)
+  const roleEditPermission = await canUpdateMemberRole(session.user.company.id);
+  const canEditRoles = roleEditPermission.success;
+
   return (
     <PageContainer>
       <PageHeader>
@@ -58,7 +63,11 @@ const TeamPage = async () => {
         </div>
       </PageHeader>
       <PageContent>
-        <TeamMembersTable members={teamMembers} />
+        <TeamMembersTable
+          members={teamMembers}
+          companyId={session.user.company.id}
+          canEditRoles={canEditRoles}
+        />
       </PageContent>
     </PageContainer>
   );

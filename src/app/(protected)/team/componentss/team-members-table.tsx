@@ -1,8 +1,18 @@
 "use client";
 
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
+import { updateMemberRole } from "@/app/actions/members/update-member-role";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -26,6 +36,8 @@ interface TeamMember {
 
 interface TeamMembersTableProps {
   members: TeamMember[];
+  companyId: string;
+  canEditRoles: boolean;
 }
 
 const getRoleTranslation = (role: Role): string => {
@@ -39,7 +51,13 @@ const getRoleTranslation = (role: Role): string => {
   return translations[role];
 };
 
-const TeamMembersTable = ({ members }: TeamMembersTableProps) => {
+const TeamMembersTable = ({
+  members,
+  companyId,
+  canEditRoles,
+}: TeamMembersTableProps) => {
+  const router = useRouter();
+
   if (members.length === 0) {
     return (
       <div className="flex h-32 items-center justify-center rounded-lg border border-dashed">
@@ -47,6 +65,16 @@ const TeamMembersTable = ({ members }: TeamMembersTableProps) => {
       </div>
     );
   }
+
+  const handleChangeRole = async (memberId: string, newRole: Role) => {
+    const result = await updateMemberRole(memberId, companyId, newRole);
+    if (result.success) {
+      toast.success(result.message || "Cargo atualizado com sucesso!");
+      router.refresh();
+    } else {
+      toast.error(result.error || "Falha ao atualizar cargo.");
+    }
+  };
 
   return (
     <div className="rounded-md border">
@@ -67,7 +95,37 @@ const TeamMembersTable = ({ members }: TeamMembersTableProps) => {
               </TableCell>
               <TableCell>{member.user.email}</TableCell>
               <TableCell>
-                <Badge>{getRoleTranslation(member.role)}</Badge>
+                {canEditRoles ? (
+                  <Select
+                    defaultValue={member.role}
+                    onValueChange={(value) =>
+                      handleChangeRole(member.id, value as Role)
+                    }
+                  >
+                    <SelectTrigger className="min-w-[220px]">
+                      <SelectValue placeholder="Selecione um cargo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="member">
+                        {getRoleTranslation("member")}
+                      </SelectItem>
+                      <SelectItem value="salesperson">
+                        {getRoleTranslation("salesperson")}
+                      </SelectItem>
+                      <SelectItem value="pickup">
+                        {getRoleTranslation("pickup")}
+                      </SelectItem>
+                      <SelectItem value="team_manager">
+                        {getRoleTranslation("team_manager")}
+                      </SelectItem>
+                      <SelectItem value="general_manager">
+                        {getRoleTranslation("general_manager")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge>{getRoleTranslation(member.role)}</Badge>
+                )}
               </TableCell>
               <TableCell>
                 {dayjs(member.createdAt).format("DD/MM/YYYY")}
