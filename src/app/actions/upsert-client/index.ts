@@ -38,7 +38,7 @@ export const upsertClient = actionClient
           desire: parsedInput.desire,
           entrance: parsedInput.entranceValue,
           phone: parsedInput.phone,
-          pickupId: parsedInput.pickupId,
+          pickupId: parsedInput.pickupId ?? null,
         })
         .where(eq(clientsTable.id, parsedInput.id));
     } else {
@@ -51,7 +51,7 @@ export const upsertClient = actionClient
         desire: parsedInput.desire,
         entrance: parsedInput.entranceValue,
         phone: parsedInput.phone,
-        pickupId: parsedInput.pickupId,
+        pickupId: parsedInput.pickupId ?? null,
         companyId: session.user.company.id,
       });
     }

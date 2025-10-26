@@ -27,14 +27,16 @@ export const upsertSeller = actionClient
     }
 
     // Validate pickup exists and belongs to the company
-    const pickup = await db.query.pickupTable.findFirst({
-      where: eq(pickupTable.id, parsedInput.pickupId),
-    });
-    if (!pickup) {
-      throw new Error("Captador não encontrado");
-    }
-    if (pickup.companyId !== session.user.company.id) {
-      throw new Error("Captador não pertence à sua empresa");
+    if (parsedInput.pickupId) {
+      const pickup = await db.query.pickupTable.findFirst({
+        where: eq(pickupTable.id, parsedInput.pickupId),
+      });
+      if (!pickup) {
+        throw new Error("Captador não encontrado");
+      }
+      if (pickup.companyId !== session.user.company.id) {
+        throw new Error("Captador não pertence à sua empresa");
+      }
     }
 
     if (parsedInput.id) {
@@ -43,14 +45,14 @@ export const upsertSeller = actionClient
         .update(salespersonTable)
         .set({
           name: parsedInput.name,
-          pickupId: parsedInput.pickupId,
+          pickupId: parsedInput.pickupId ?? null,
         })
         .where(eq(salespersonTable.id, parsedInput.id));
     } else {
       // Create new seller
       await db.insert(salespersonTable).values({
         name: parsedInput.name,
-        pickupId: parsedInput.pickupId,
+        pickupId: parsedInput.pickupId ?? null,
         companyId: session.user.company.id,
       });
     }

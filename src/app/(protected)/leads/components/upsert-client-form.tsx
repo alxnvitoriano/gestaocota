@@ -63,7 +63,7 @@ const UpsertClientForm = ({
       desire: client?.desire || "",
       entranceValue: client?.entrance ? client.entrance / 100 : 0,
       phone: client?.phone || "",
-      pickupId: client?.pickupId || (pickups[0]?.id ?? undefined),
+      pickupId: client?.pickupId || undefined,
     },
   });
   useEffect(() => {
@@ -76,7 +76,7 @@ const UpsertClientForm = ({
         desire: client?.desire || "",
         entranceValue: client?.entrance ? client.entrance / 100 : 0,
         phone: client?.phone || "",
-        pickupId: client?.pickupId || (pickups[0]?.id ?? undefined),
+        pickupId: client?.pickupId || undefined,
       });
     }
   }, [isOpen, form, client, pickups]);
@@ -258,7 +258,7 @@ const UpsertClientForm = ({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Captador</FormLabel>
+                  <FormLabel>Captador (opcional)</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>

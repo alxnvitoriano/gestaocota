@@ -21,10 +21,13 @@ const AddSellersButton = ({ pickups }: AddSellersButtonProps) => {
         <ResponsiveAddButton
           desktopText="Adicionar vendedor"
           mobileText="Vendedor"
-          disabled={pickups.length === 0}
         />
       </DialogTrigger>
-      <UpsertSellersForm onSuccess={() => setIsOpen(false)} isOpen={isOpen} pickups={pickups} />
+      <UpsertSellersForm
+        onSuccess={() => setIsOpen(false)}
+        isOpen={isOpen}
+        pickups={pickups}
+      />
     </Dialog>
   );
 };

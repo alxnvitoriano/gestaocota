@@ -55,7 +55,7 @@ const UpsertSellersForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller?.name || "",
-      pickupId: seller?.pickupId || "",
+      pickupId: seller?.pickupId || undefined,
       id: seller?.id || undefined,
     },
   });
@@ -82,7 +82,7 @@ const UpsertSellersForm = ({
     if (isOpen) {
       form.reset({
         name: seller?.name || "",
-        pickupId: seller?.pickupId || "",
+        pickupId: seller?.pickupId || undefined,
         id: seller?.id || undefined,
       });
     }
@@ -128,7 +128,7 @@ const UpsertSellersForm = ({
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Captador</FormLabel>
+                <FormLabel>Captador (opcional)</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
