@@ -18,7 +18,7 @@ import { pickupTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddPickupButton from "./components/add-pickup";
-import PickupCard from "./components/pickup-card";
+import PickupsClient from "./components/pickups-client";
 
 const PickupPage = async () => {
   const session = await auth.api.getSession({
@@ -67,11 +67,7 @@ const PickupPage = async () => {
         </PageActions>
       </PageHeader>
       <PageContent>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {pickups.map((pickup) => (
-            <PickupCard key={pickup.id} pickup={pickup} />
-          ))}
-        </div>
+        <PickupsClient pickups={pickups} />
       </PageContent>
     </PageContainer>
   );

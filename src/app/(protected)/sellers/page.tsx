@@ -18,7 +18,7 @@ import { pickupTable, salespersonTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddSellersButton from "./components/add-sellers";
-import SellerCard from "./components/seller-card";
+import SellersClient from "./components/sellers-client";
 
 const SellersPage = async () => {
   const session = await auth.api.getSession({
@@ -72,11 +72,8 @@ const SellersPage = async () => {
         </PageActions>
       </PageHeader>
       <PageContent>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {sellers.map((seller) => (
-            <SellerCard key={seller.id} seller={seller} pickups={pickups} />
-          ))}
-        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+        <SellersClient sellers={sellers} pickups={pickups} />
       </PageContent>
     </PageContainer>
   );
