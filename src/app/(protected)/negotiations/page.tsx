@@ -144,13 +144,15 @@ const NegotiationsPage = async () => {
             Gerencie suas negociações e propostas comerciais.
           </PageDescription>
         </PageHeaderContent>
-        <PageActions>
-          <AddNegotiationButton
-            clients={clients}
-            sellers={sellers}
-            pickups={pickups.map((p) => ({ id: p.id, name: p.name }))}
-          />
-        </PageActions>
+        {!isPickup && (
+          <PageActions>
+            <AddNegotiationButton
+              clients={clients}
+              sellers={sellers}
+              pickups={pickups.map((p) => ({ id: p.id, name: p.name }))}
+            />
+          </PageActions>
+        )}
       </PageHeader>
       <PageContent>
         <NegociationsClient
@@ -159,6 +161,7 @@ const NegotiationsPage = async () => {
           sellers={sellers}
           pickups={pickups.map((p) => ({ id: p.id, name: p.name }))}
           companyId={companyId}
+          isReadOnly={isPickup}
         />
       </PageContent>
     </PageContainer>

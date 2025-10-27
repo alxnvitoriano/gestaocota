@@ -42,6 +42,7 @@ interface UpsertNegociationFormProps {
   clients: Pick<typeof clientsTable.$inferSelect, "id" | "name">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  readOnly?: boolean;
   negociation?: (Pick<
     typeof negociationsTable.$inferSelect,
     | "id"
@@ -65,6 +66,7 @@ const UpsertNegociationForm = ({
   clients,
   sellers,
   pickups,
+  readOnly = false,
   negociation,
 }: UpsertNegociationFormProps) => {
   type NegotiationStatus = z.infer<
@@ -119,6 +121,7 @@ const UpsertNegociationForm = ({
   const onSubmit: SubmitHandler<z.infer<typeof upsertNegotiationSchema>> = (
     values,
   ) => {
+    if (readOnly) return;
     upsertNegociation(values);
   };
 
@@ -126,12 +129,18 @@ const UpsertNegociationForm = ({
     <DialogContent className="sm:max-w-[600px]">
       <DialogHeader>
         <DialogTitle>
-          {negociation ? "Editar negociação" : "Criar nova negociação"}
+          {readOnly
+            ? "Visualizar negociação"
+            : negociation
+              ? "Editar negociação"
+              : "Criar nova negociação"}
         </DialogTitle>
         <DialogDescription>
-          {negociation
-            ? "Atualize os dados da negociação."
-            : "Preencha os dados para criar uma nova negociação."}
+          {readOnly
+            ? "Detalhes da negociação. Campos desabilitados para edição."
+            : negociation
+              ? "Atualize os dados da negociação."
+              : "Preencha os dados para criar uma nova negociação."}
         </DialogDescription>
       </DialogHeader>
 
@@ -150,6 +159,7 @@ const UpsertNegociationForm = ({
                       value={field.value}
                       onValueChange={field.onChange}
                       placeholder="Selecione um cliente"
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -165,7 +175,7 @@ const UpsertNegociationForm = ({
                   <FormLabel>Vendedor</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione um vendedor" />
                       </SelectTrigger>
                     </FormControl>
@@ -189,7 +199,7 @@ const UpsertNegociationForm = ({
                   <FormLabel>Captador</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione um captador" />
                       </SelectTrigger>
                       <SelectContent>
@@ -227,6 +237,7 @@ const UpsertNegociationForm = ({
                       onValueChange={(value) => {
                         field.onChange(value.floatValue || 0);
                       }}
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -247,7 +258,7 @@ const UpsertNegociationForm = ({
                         field.onChange(val as NegotiationStatus)
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -276,6 +287,7 @@ const UpsertNegociationForm = ({
                       placeholder="Ex: Aceito"
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -295,6 +307,7 @@ const UpsertNegociationForm = ({
                       placeholder="Adicione observações"
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
+                      disabled={readOnly}
                     />
                   </FormControl>
                   <FormMessage />
@@ -310,7 +323,7 @@ const UpsertNegociationForm = ({
                   <FormLabel>Administradora</FormLabel>
                   <FormControl>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione uma administradora" />
                       </SelectTrigger>
                       <SelectContent>
@@ -326,12 +339,14 @@ const UpsertNegociationForm = ({
               )}
             />
           </div>
-          <DialogFooter>
-            <Button type="submit" disabled={isExecuting}>
-              {isExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {negociation ? "Atualizar negociação" : "Criar negociação"}
-            </Button>
-          </DialogFooter>
+          {!readOnly && (
+            <DialogFooter>
+              <Button type="submit" disabled={isExecuting}>
+                {isExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {negociation ? "Atualizar negociação" : "Criar negociação"}
+              </Button>
+            </DialogFooter>
+          )}
         </form>
       </Form>
     </DialogContent>

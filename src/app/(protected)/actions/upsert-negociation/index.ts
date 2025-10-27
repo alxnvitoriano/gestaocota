@@ -38,6 +38,22 @@ export const upsertNegotiationAction = actionClient
         throw new Error("Empresa não selecionada");
       }
 
+      // Verificar role do usuário para restringir edição/criação
+      const meMember = await db.query.member.findFirst({
+        where: (fields, { and, eq }) =>
+          and(
+            eq(fields.companyId, session.user.company!.id),
+            eq(fields.userId, session.user.id),
+          ),
+        columns: { role: true },
+      });
+
+      if (meMember?.role === "pickup") {
+        throw new Error(
+          "Usuário com cargo 'pickup' não pode editar/criar negociações",
+        );
+      }
+
       let negotiation;
 
       if (id) {

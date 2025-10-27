@@ -35,6 +35,7 @@ export const createNegociationsTableColumns = (
   clients: SimpleClient[],
   sellers: SimpleSeller[],
   pickups: { id: string; name: string }[],
+  readOnly?: boolean,
 ): ColumnDef<NegociationWithRelations>[] => [
   {
     id: "client",
@@ -86,6 +87,7 @@ export const createNegociationsTableColumns = (
           clients={clients}
           sellers={sellers}
           pickups={pickups}
+          readOnly={!!readOnly}
         />
       );
     },

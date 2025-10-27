@@ -42,6 +42,7 @@ interface NegociationsClientProps {
   clients: SimpleClient[];
   sellers: SimpleSeller[];
   pickups: { id: string; name: string }[];
+  isReadOnly?: boolean;
 }
 
 export function NegociationsClient({
@@ -50,6 +51,7 @@ export function NegociationsClient({
   clients,
   sellers,
   pickups,
+  isReadOnly = false,
 }: NegociationsClientProps) {
   const [filteredNegociations, setFilteredNegociations] =
     useState<NegociationWithRelations[]>(negociations);
@@ -91,7 +93,12 @@ export function NegociationsClient({
 
       <div className="rounded-md border">
         <DataTable
-          columns={createNegociationsTableColumns(clients, sellers, pickups)}
+          columns={createNegociationsTableColumns(
+            clients,
+            sellers,
+            pickups,
+            isReadOnly,
+          )}
           data={filteredNegociations}
         />
       </div>

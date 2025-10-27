@@ -1,6 +1,6 @@
 "use client";
 
-import { EditIcon, MoreVerticalIcon, TrashIcon } from "lucide-react";
+import { EditIcon, EyeIcon, MoreVerticalIcon, TrashIcon } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -43,7 +43,11 @@ type SimpleSeller = {
 type SimplePickup = Pick<typeof pickupTable.$inferSelect, "id" | "name">;
 
 type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
-  client: { id: string; name: string; pickup?: { id: string; name: string } | null } | null;
+  client: {
+    id: string;
+    name: string;
+    pickup?: { id: string; name: string } | null;
+  } | null;
   salesperson: { id: string; name: string } | null;
 };
 
@@ -52,6 +56,7 @@ interface NegociationsTableActionsProps {
   clients: SimpleClient[];
   sellers: SimpleSeller[];
   pickups: SimplePickup[];
+  readOnly?: boolean;
 }
 
 export const NegociationsTableActions = ({
@@ -59,6 +64,7 @@ export const NegociationsTableActions = ({
   clients,
   sellers,
   pickups,
+  readOnly = false,
 }: NegociationsTableActionsProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -93,17 +99,26 @@ export const NegociationsTableActions = ({
             {negotiation.client?.name || "Negociação"}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
-            <EditIcon className="mr-2 h-4 w-4" />
-            Editar
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setIsDeleteDialogOpen(true)}
-            className="text-destructive focus:text-destructive"
-          >
-            <TrashIcon className="mr-2 h-4 w-4" />
-            Excluir
-          </DropdownMenuItem>
+          {readOnly ? (
+            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+              <EyeIcon className="mr-2 h-4 w-4" />
+              Visualizar
+            </DropdownMenuItem>
+          ) : (
+            <>
+              <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+                <EditIcon className="mr-2 h-4 w-4" />
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setIsDeleteDialogOpen(true)}
+                className="text-destructive focus:text-destructive"
+              >
+                <TrashIcon className="mr-2 h-4 w-4" />
+                Excluir
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -139,6 +154,7 @@ export const NegociationsTableActions = ({
           clients={clients}
           sellers={sellers}
           pickups={pickups}
+          readOnly={readOnly}
           onSuccess={() => setIsEditDialogOpen(false)}
         />
       </Dialog>
