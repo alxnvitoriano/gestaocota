@@ -97,15 +97,8 @@ const ClientsPage = async () => {
     where: isGeneralManager
       ? eq(salespersonTable.companyId, companyId)
       : userRole === "pickup"
-        ? and(
-            eq(salespersonTable.companyId, companyId),
-            visiblePickupIds.length > 0
-              ? inArray(salespersonTable.pickupId, visiblePickupIds)
-              : eq(
-                  salespersonTable.id,
-                  "00000000-0000-0000-0000-000000000000",
-                )
-          )
+        // Captador deve ver todos os vendedores da empresa
+        ? eq(salespersonTable.companyId, companyId)
         : and(
             eq(salespersonTable.companyId, companyId),
             eq(salespersonTable.name, session.user.name || ""),
