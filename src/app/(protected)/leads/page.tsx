@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -53,14 +53,38 @@ const ClientsPage = async () => {
       </PageContainer>
     );
   }
-  const clients = await db.query.clientsTable.findMany({
-    where: eq(clientsTable.companyId, companyId),
+  // Verificar role do usuário
+  const userMember = await db.query.member.findFirst({
+    where: (m, { and, eq }) =>
+      and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
+  const isGeneralManager = userMember?.role === "general_manager";
 
-  const pickups = await db.query.pickupTable.findMany({
-    where: eq(pickupTable.companyId, companyId),
+  // Limitar pickups conforme visibilidade
+  const visiblePickups = await db.query.pickupTable.findMany({
+    where: isGeneralManager
+      ? eq(pickupTable.companyId, companyId)
+      : and(
+          eq(pickupTable.companyId, companyId),
+          eq(pickupTable.userId, session.user.id),
+        ),
     columns: { id: true, name: true },
   });
+
+  const visiblePickupIds = visiblePickups.map((p) => p.id).filter(Boolean);
+
+  const clients = await db.query.clientsTable.findMany({
+    where: isGeneralManager
+      ? eq(clientsTable.companyId, companyId)
+      : and(
+          eq(clientsTable.companyId, companyId),
+          visiblePickupIds.length > 0
+            ? inArray(clientsTable.pickupId, visiblePickupIds)
+            : eq(clientsTable.id, "00000000-0000-0000-0000-000000000000"), // força vazio quando sem pickups
+        ),
+  });
+
+  const pickups = visiblePickups;
 
   // Buscar vendedores da empresa
   const sellers = await db.query.salespersonTable.findMany({
