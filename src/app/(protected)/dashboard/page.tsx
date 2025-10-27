@@ -94,6 +94,7 @@ export default async function Page() {
   });
   const isSalesperson = meMember?.role === "salesperson";
   const isPickup = meMember?.role === "pickup";
+  const isGeneralManager = meMember?.role === "general_manager";
 
   const totalNegotiations = negociations.length;
   const acceptedNegotiations = negociations.filter(
@@ -187,6 +188,7 @@ export default async function Page() {
           metrics={metrics}
           sellerStats={sellerStats}
           pickupStats={pickupStats}
+          showMetrics={isGeneralManager}
         />
       </PageContent>
     </PageContainer>
