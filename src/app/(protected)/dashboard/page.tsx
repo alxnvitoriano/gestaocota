@@ -86,6 +86,14 @@ export default async function Page() {
       }),
     ]);
 
+  // Descobrir a role do usuário na empresa
+  const meMember = await db.query.member.findFirst({
+    where: (fields, { and, eq }) =>
+      and(eq(fields.companyId, companyId), eq(fields.userId, session.user.id)),
+    columns: { role: true },
+  });
+  const isSalesperson = meMember?.role === "salesperson";
+
   const totalNegotiations = negociations.length;
   const acceptedNegotiations = negociations.filter(
     (n) => n.negociationStatus === "accepted",
@@ -114,7 +122,12 @@ export default async function Page() {
   );
   const leadsTreatedCount = clientsWithNegotiations.size;
 
-  const sellerStats = sellers.map((s) => {
+  // Se o usuário for vendedor (salesperson), mostrar apenas suas estatísticas
+  const visibleSellers = isSalesperson
+    ? sellers.filter((s) => s.name === (session.user.name || ""))
+    : sellers;
+
+  const sellerStats = visibleSellers.map((s) => {
     const sNeg = negociations.filter((n) => n.salespersonId === s.id);
     const sAccepted = sNeg.filter((n) => n.negociationStatus === "accepted");
     const conversion = sNeg.length
