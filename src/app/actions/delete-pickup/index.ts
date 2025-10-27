@@ -38,5 +38,5 @@ export const deletePickup = actionClient
     }
 
     await db.delete(pickupTable).where(eq(pickupTable.id, parsedInput.id));
-    revalidatePath("/pickups");
+    revalidatePath("/pickup");
   });

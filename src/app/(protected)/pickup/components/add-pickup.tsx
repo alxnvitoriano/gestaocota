@@ -7,7 +7,13 @@ import { ResponsiveAddButton } from "@/components/ui/responsive-add-button";
 
 import UpsertPickupForm from "./upsert-pickup-form";
 
-const AddPickupButton = () => {
+type EligibleUser = { id: string; name: string; email: string };
+
+interface AddPickupButtonProps {
+  eligibleUsers: EligibleUser[];
+}
+
+const AddPickupButton = ({ eligibleUsers }: AddPickupButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -18,7 +24,11 @@ const AddPickupButton = () => {
           mobileText="Captador"
         />
       </DialogTrigger>
-      <UpsertPickupForm onSuccess={() => setIsOpen(false)} isOpen={isOpen} />
+      <UpsertPickupForm
+        onSuccess={() => setIsOpen(false)}
+        isOpen={isOpen}
+        eligibleUsers={eligibleUsers}
+      />
     </Dialog>
   );
 };

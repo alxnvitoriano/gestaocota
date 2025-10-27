@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { upsertPickup } from "@/app/actions/upsert-pickup";
-import { upsertPickupSchema } from "@/app/actions/upsert-pickup/schema";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -25,24 +24,39 @@ import {
 } from "@/components/ui/form";
 import { FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { pickupTable } from "@/db/schema";
 
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
+  userId: z.string().optional(),
 });
 
 interface UpsertPickupProps {
   isOpen: boolean;
   pickup?: typeof pickupTable.$inferSelect;
   onSuccess?: () => void;
+  eligibleUsers?: { id: string; name: string; email: string }[];
 }
 
-const UpsertPickupForm = ({ isOpen, pickup, onSuccess }: UpsertPickupProps) => {
+const UpsertPickupForm = ({
+  isOpen,
+  pickup,
+  onSuccess,
+  eligibleUsers = [],
+}: UpsertPickupProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: pickup?.name || "",
+      userId: pickup?.userId || undefined,
     },
   });
 
@@ -67,11 +81,12 @@ const UpsertPickupForm = ({ isOpen, pickup, onSuccess }: UpsertPickupProps) => {
     if (isOpen) {
       form.reset({
         name: pickup?.name || "",
+        userId: pickup?.userId || undefined,
       });
     }
   }, [isOpen, form, pickup]);
 
-  const onSubmit = (values: z.infer<typeof upsertPickupSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     upsertPickupAction.execute({
       ...values,
       id: pickup?.id,
@@ -99,6 +114,36 @@ const UpsertPickupForm = ({ isOpen, pickup, onSuccess }: UpsertPickupProps) => {
               </FormItem>
             )}
           />
+
+          {!pickup?.id && (
+            <FormField
+              name="userId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Usuario Captador</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o usuário" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {eligibleUsers.map((u) => (
+                        <SelectItem key={u.id} value={u.id}>
+                          {u.name} ({u.email})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <DialogFooter>
             <Button type="submit" disabled={upsertPickupAction.isPending}>

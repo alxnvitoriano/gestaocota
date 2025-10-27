@@ -9,9 +9,10 @@ import PickupCard from "./pickup-card";
 
 interface PickupsClientProps {
   pickups: typeof pickupTable.$inferSelect[];
+  eligibleUsers: { id: string; name: string; email: string }[];
 }
 
-export default function PickupsClient({ pickups }: PickupsClientProps) {
+export default function PickupsClient({ pickups, eligibleUsers }: PickupsClientProps) {
   const [term, setTerm] = useState("");
 
   const filtered = useMemo(() => {
@@ -30,7 +31,7 @@ export default function PickupsClient({ pickups }: PickupsClientProps) {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filtered.map((pickup) => (
-          <PickupCard key={pickup.id} pickup={pickup} />
+          <PickupCard key={pickup.id} pickup={pickup} eligibleUsers={eligibleUsers} />
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -49,9 +49,33 @@ const PickupPage = async () => {
     );
   }
 
-  const pickups = await db.query.pickupTable.findMany({
-    where: eq(pickupTable.companyId, companyId),
+  // Verificar role do usuário na empresa
+  const userMember = await db.query.member.findFirst({
+    where: (m, { and, eq }) => and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
+  const isGeneralManager = userMember?.role === "general_manager";
+
+  const pickups = await db.query.pickupTable.findMany({
+    where: isGeneralManager
+      ? eq(pickupTable.companyId, companyId)
+      : and(eq(pickupTable.companyId, companyId), eq(pickupTable.userId, session.user.id)),
+  });
+
+  // Buscar membros com role 'pickup' para seleção
+  const pickupMembers = await db.query.member.findMany({
+    where: (m, { and, eq }) =>
+      and(eq(m.companyId, companyId), eq(m.role, "pickup")),
+    with: { user: true },
+  });
+
+  const eligibleUsers = pickupMembers
+    .map((m) => ({
+      id: m.userId,
+      name: m.user?.name ?? "",
+      email: m.user?.email ?? "",
+    }))
+    // Ordena por nome para melhor UX
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <PageContainer>
@@ -63,11 +87,11 @@ const PickupPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddPickupButton />
+          <AddPickupButton eligibleUsers={eligibleUsers} />
         </PageActions>
       </PageHeader>
       <PageContent>
-        <PickupsClient pickups={pickups} />
+        <PickupsClient pickups={pickups} eligibleUsers={eligibleUsers} />
       </PageContent>
     </PageContainer>
   );

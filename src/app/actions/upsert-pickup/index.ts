@@ -28,20 +28,68 @@ export const upsertPickup = actionClient
 
     if (parsedInput.id) {
       // Update existing pickup
+      const existing = await db.query.pickupTable.findFirst({
+        where: eq(pickupTable.id, parsedInput.id),
+      });
+      if (!existing) {
+        throw new Error("Captador não encontrado");
+      }
+      if (existing.companyId !== session.user.company.id) {
+        throw new Error("Captador não pertence à sua empresa");
+      }
+
+      // Se userId foi enviado, validar que é membro pickup da empresa
+      if (parsedInput.userId) {
+        const eligibleMember = await db.query.member.findFirst({
+          where: (m, { and, eq }) =>
+            and(
+              eq(m.userId, parsedInput.userId!),
+              eq(m.companyId, session.user.company!.id),
+              eq(m.role, "pickup"),
+            ),
+        });
+        if (!eligibleMember) {
+          throw new Error(
+            "Usuário selecionado não é membro 'pickup' desta empresa",
+          );
+        }
+      }
+
       await db
         .update(pickupTable)
         .set({
           name: parsedInput.name,
+          userId: parsedInput.userId ?? existing.userId,
         })
         .where(eq(pickupTable.id, parsedInput.id));
     } else {
       // Create new pickup
+      if (!parsedInput.userId) {
+        throw new Error("Selecione o usuário captador");
+      }
+
+      // Validar que o usuário selecionado é membro da empresa com role 'pickup'
+      const eligibleMember = await db.query.member.findFirst({
+        where: (m, { and, eq }) =>
+          and(
+            eq(m.userId, parsedInput.userId!),
+            eq(m.companyId, session.user.company!.id),
+            eq(m.role, "pickup"),
+          ),
+      });
+
+      if (!eligibleMember) {
+        throw new Error(
+          "Usuário selecionado não é membro 'pickup' desta empresa",
+        );
+      }
+
       await db.insert(pickupTable).values({
         name: parsedInput.name,
-        companyId: session.user.company.id,
-        userId: session.user.id,
+        companyId: session.user.company?.id,
+        userId: parsedInput.userId,
       });
     }
 
-    revalidatePath("/pickups");
+    revalidatePath("/pickup");
   });

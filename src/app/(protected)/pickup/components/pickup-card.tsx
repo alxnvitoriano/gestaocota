@@ -25,9 +25,10 @@ import UpsertPickupForm from "./upsert-pickup-form";
 
 interface PickupCardProps {
   pickup: typeof pickupTable.$inferSelect;
+  eligibleUsers: { id: string; name: string; email: string }[];
 }
 
-const PickupCard = ({ pickup }: PickupCardProps) => {
+const PickupCard = ({ pickup, eligibleUsers }: PickupCardProps) => {
   const pickupInitials = pickup.name
     .split(" ")
     .map((name) => name[0])
@@ -72,6 +73,7 @@ const PickupCard = ({ pickup }: PickupCardProps) => {
           <UpsertPickupForm
             pickup={{ ...pickup, avatarImageUrl: null }}
             isOpen={true}
+            eligibleUsers={eligibleUsers}
           />
         </Dialog>
         {pickup && (
