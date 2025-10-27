@@ -18,6 +18,7 @@ export const upsertClientSchema = z.object({
     .int()
     .min(0, "Valor da entrada em espécie deve ser maior ou igual a zero"),
   pickupId: z.string().uuid().optional(),
+  salespersonId: z.string().uuid().optional(),
 });
 
 export type UpsertClientSchema = z.infer<typeof upsertClientSchema>;

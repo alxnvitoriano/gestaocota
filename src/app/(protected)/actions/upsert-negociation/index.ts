@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
-import { negociationsTable } from "@/db/schema";
+import { clientsTable, negociationsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { actionClient } from "@/lib/safe-action";
 
@@ -22,6 +22,8 @@ export const upsertNegotiationAction = actionClient
         negociationValue,
         negociationResult,
         negociationStatus,
+        observation,
+        pickupId,
       },
     }) => {
       const session = await auth.api.getSession({
@@ -48,6 +50,7 @@ export const upsertNegotiationAction = actionClient
             negociationValue,
             negociationResult,
             negociationStatus,
+            observation,
             updatedAt: new Date(),
           })
           .where(eq(negociationsTable.id, id))
@@ -67,8 +70,17 @@ export const upsertNegotiationAction = actionClient
             negociationValue,
             negociationResult,
             negociationStatus,
+            observation,
           })
           .returning();
+      }
+
+      // Atualiza o captador do cliente, se informado
+      if (pickupId) {
+        await db
+          .update(clientsTable)
+          .set({ pickupId })
+          .where(eq(clientsTable.id, clientId));
       }
 
       revalidatePath("/negotiations");

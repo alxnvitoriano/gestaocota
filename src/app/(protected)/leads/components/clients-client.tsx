@@ -35,14 +35,14 @@ interface ClientsClientProps {
   companyId: string;
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
-  clientSellerMap: Record<string, string[]>;
+  clientSelectedSellerMap: Record<string, string | undefined>;
 }
 
 export function ClientsClient({
   clients /*companyId*/,
   pickups,
   sellers,
-  clientSellerMap,
+  clientSelectedSellerMap,
 }: ClientsClientProps) {
   const [filteredClients, setFilteredClients] = useState<Client[]>(clients);
   const [selectedPickupId, setSelectedPickupId] = useState<string | undefined>(
@@ -67,13 +67,13 @@ export function ClientsClient({
 
     if (selectedSellerId && selectedSellerId !== "") {
       next = next.filter((c) => {
-        const sellersForClient = clientSellerMap[c.id] || [];
-        return sellersForClient.includes(selectedSellerId!);
+        const sellerForClient = clientSelectedSellerMap[c.id];
+        return sellerForClient === selectedSellerId;
       });
     }
 
     setFilteredClients(next);
-  }, [selectedPickupId, selectedSellerId, clients, clientSellerMap]);
+  }, [selectedPickupId, selectedSellerId, clients, clientSelectedSellerMap]);
 
   return (
     <>
@@ -126,7 +126,11 @@ export function ClientsClient({
 
       <div className="rounded-md border">
         <DataTable
-          columns={getClientsTableColumns(pickups)}
+          columns={getClientsTableColumns(
+            pickups,
+            sellers,
+            clientSelectedSellerMap,
+          )}
           data={filteredClients.map((client) => ({
             ...client,
             createdAt: new Date(client.createdAt),

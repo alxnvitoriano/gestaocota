@@ -26,7 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { negociationsTable } from "@/db/schema";
+import { negociationsTable, pickupTable } from "@/db/schema";
 
 import UpsertNegotiationForm from "./upsert-negotiation-form";
 
@@ -40,21 +40,25 @@ type SimpleSeller = {
   name: string;
 };
 
+type SimplePickup = Pick<typeof pickupTable.$inferSelect, "id" | "name">;
+
 type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
-  client: { name: string } | null;
-  salesperson: { name: string } | null;
+  client: { id: string; name: string; pickup?: { id: string; name: string } | null } | null;
+  salesperson: { id: string; name: string } | null;
 };
 
 interface NegociationsTableActionsProps {
   negotiation: NegociationWithRelations;
   clients: SimpleClient[];
   sellers: SimpleSeller[];
+  pickups: SimplePickup[];
 }
 
 export const NegociationsTableActions = ({
   negotiation,
   clients,
   sellers,
+  pickups,
 }: NegociationsTableActionsProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -134,6 +138,7 @@ export const NegociationsTableActions = ({
           negociation={negotiation}
           clients={clients}
           sellers={sellers}
+          pickups={pickups}
           onSuccess={() => setIsEditDialogOpen(false)}
         />
       </Dialog>

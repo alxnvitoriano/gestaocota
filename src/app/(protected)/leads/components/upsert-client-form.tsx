@@ -36,18 +36,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { clientsTable, pickupTable } from "@/db/schema";
+import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 
 interface UpsertClientFormProps {
   isOpen: boolean;
   client?: typeof clientsTable.$inferSelect;
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  sellers?: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   onSuccess?: () => void;
 }
 
 const UpsertClientForm = ({
   client,
   pickups,
+  sellers = [],
   onSuccess,
   isOpen,
 }: UpsertClientFormProps) => {
@@ -64,6 +66,7 @@ const UpsertClientForm = ({
       entranceValue: client?.entrance ? client.entrance / 100 : 0,
       phone: client?.phone || "",
       pickupId: client?.pickupId || undefined,
+      salespersonId: undefined,
     },
   });
   useEffect(() => {
@@ -77,6 +80,7 @@ const UpsertClientForm = ({
         entranceValue: client?.entrance ? client.entrance / 100 : 0,
         phone: client?.phone || "",
         pickupId: client?.pickupId || undefined,
+        salespersonId: undefined,
       });
     }
   }, [isOpen, form, client, pickups]);
@@ -268,6 +272,30 @@ const UpsertClientForm = ({
                         {pickups.map((p) => (
                           <SelectItem key={p.id} value={p.id}>
                             {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="salespersonId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vendedor (opcional)</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um vendedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sellers.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -43,6 +43,10 @@ export const searchNegociationsAction = actionClient
           id: salespersonTable.id,
           name: salespersonTable.name,
         },
+        pickup: {
+          id: pickupTable.id,
+          name: pickupTable.name,
+        },
       })
       .from(negociationsTable)
       .leftJoin(clientsTable, eq(negociationsTable.clientId, clientsTable.id))
@@ -56,7 +60,9 @@ export const searchNegociationsAction = actionClient
 
     return negotiations.map((row) => ({
       ...row.negociation,
-      client: row.client ?? null,
+      client: row.client
+        ? { ...row.client, pickup: row.pickup ?? null }
+        : null,
       salesperson: row.salesperson ?? null,
     }));
   });

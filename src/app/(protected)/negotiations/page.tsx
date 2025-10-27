@@ -14,7 +14,7 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 import { db } from "@/db";
-import { clientsTable, salespersonTable } from "@/db/schema";
+import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddNegotiationButton from "./_components/add-negotiation-button";
@@ -60,6 +60,12 @@ const NegotiationsPage = async () => {
     },
   });
 
+  // Buscar captadores da empresa (restrito se usuário for 'pickup')
+  let pickups = await db.query.pickupTable.findMany({
+    where: eq(pickupTable.companyId, companyId),
+    columns: { id: true, name: true, userId: true },
+  });
+
   // Descobrir a role do usuário na empresa
   const meMember = await db.query.member.findFirst({
     where: (fields, { and, eq }) =>
@@ -84,10 +90,12 @@ const NegotiationsPage = async () => {
             eq(fields.companyId, companyId),
             eq(fields.userId, session.user.id),
           ),
-        columns: { id: true },
+        columns: { id: true, name: true },
       });
       const myPickupId = myPickup?.id ?? null;
       sellers = sellers.filter((s) => s.pickupId === myPickupId);
+      // Restringe captadores apenas ao do usuário
+      pickups = myPickup ? [{ id: myPickup.id, name: myPickup.name, userId: session.user.id }] : [];
     } else {
       // Vendedor comum vê apenas a si mesmo (associação via nome do usuário)
       const myName = session.user.name || "";
@@ -106,7 +114,10 @@ const NegotiationsPage = async () => {
             inArray(fields.salespersonId, allowedSellerIds),
           ),
     with: {
-      client: { columns: { id: true, name: true } },
+      client: {
+        columns: { id: true, name: true },
+        with: { pickup: { columns: { id: true, name: true } } },
+      },
       salesperson: { columns: { id: true, name: true } },
     },
   });
@@ -121,7 +132,11 @@ const NegotiationsPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddNegotiationButton clients={clients} sellers={sellers} />
+          <AddNegotiationButton
+            clients={clients}
+            sellers={sellers}
+            pickups={pickups.map((p) => ({ id: p.id, name: p.name }))}
+          />
         </PageActions>
       </PageHeader>
       <PageContent>
@@ -129,6 +144,7 @@ const NegotiationsPage = async () => {
           negociations={negociations}
           clients={clients}
           sellers={sellers}
+          pickups={pickups.map((p) => ({ id: p.id, name: p.name }))}
           companyId={companyId}
         />
       </PageContent>

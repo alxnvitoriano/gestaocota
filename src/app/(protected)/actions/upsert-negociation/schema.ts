@@ -10,6 +10,8 @@ export const upsertNegotiationSchema = z.object({
     .min(0, "Valor da negociação deve ser maior ou igual a zero"),
   negociationResult: z.string().optional(),
   administrator: z.enum(["Evoy", "Alpha", "Reserva", "Eutbem"]).optional(),
+  observation: z.string().optional(),
+  pickupId: z.string().uuid().optional(),
 });
 
 export type UpsertNegotiationSchema = z.infer<typeof upsertNegotiationSchema>;

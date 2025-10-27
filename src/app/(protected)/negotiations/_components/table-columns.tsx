@@ -17,12 +17,15 @@ type SimpleSeller = {
 };
 
 type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
-  client: { name: string } | null;
-  salesperson: { name: string } | null;
+  client:
+    | { id: string; name: string; pickup?: { id: string; name: string } | null }
+    | null;
+  salesperson: { id: string; name: string } | null;
 };
 
-function formatCurrency(value: number) {
-  return value.toLocaleString("pt-BR", {
+function formatCurrency(value: number | null | undefined) {
+  const safe = typeof value === "number" ? value : 0;
+  return safe.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
@@ -31,11 +34,17 @@ function formatCurrency(value: number) {
 export const createNegociationsTableColumns = (
   clients: SimpleClient[],
   sellers: SimpleSeller[],
+  pickups: { id: string; name: string }[],
 ): ColumnDef<NegociationWithRelations>[] => [
   {
     id: "client",
     accessorFn: (row) => row.client?.name || "Cliente não encontrado",
     header: "Cliente",
+  },
+  {
+    id: "pickup",
+    accessorFn: (row) => row.client?.pickup?.name || "Captador não encontrado",
+    header: "Captador",
   },
   {
     id: "salesperson",
@@ -47,7 +56,8 @@ export const createNegociationsTableColumns = (
     accessorKey: "negociationValue",
     header: "Valor da Negociação",
     cell: ({ row }) => {
-      return formatCurrency(row.getValue("negociationValue"));
+      const raw = row.getValue("negociationValue") as number | null | undefined;
+      return formatCurrency(raw);
     },
   },
   {
@@ -75,6 +85,7 @@ export const createNegociationsTableColumns = (
           negotiation={negotiation}
           clients={clients}
           sellers={sellers}
+          pickups={pickups}
         />
       );
     },

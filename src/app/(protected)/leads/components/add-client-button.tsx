@@ -4,16 +4,17 @@ import { useState } from "react";
 
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { ResponsiveAddButton } from "@/components/ui/responsive-add-button";
-import { pickupTable } from "@/db/schema";
+import { pickupTable, salespersonTable } from "@/db/schema";
 
 // import { ResponsiveAddButton } from "@/components/ui/responsive-add-button";
 import UpsertClientForm from "./upsert-client-form";
 
 interface AddClientButtonProps {
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  sellers?: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
 }
 
-const AddClientButton = ({ pickups }: AddClientButtonProps) => {
+const AddClientButton = ({ pickups, sellers = [] }: AddClientButtonProps) => {
   const [open, setOpen] = useState(false);
 
   const handleSuccess = () => {
@@ -28,7 +29,12 @@ const AddClientButton = ({ pickups }: AddClientButtonProps) => {
           mobileText="Cliente"
         />
       </DialogTrigger>
-      <UpsertClientForm pickups={pickups} onSuccess={handleSuccess} isOpen={open} />
+      <UpsertClientForm
+        pickups={pickups}
+        sellers={sellers}
+        onSuccess={handleSuccess}
+        isOpen={open}
+      />
     </Dialog>
   );
 };

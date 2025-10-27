@@ -58,7 +58,8 @@ const ClientsPage = async () => {
     where: (m, { and, eq }) =>
       and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
-  const isGeneralManager = userMember?.role === "general_manager";
+  const userRole = userMember?.role;
+  const isGeneralManager = userRole === "general_manager";
 
   // Limitar pickups conforme visibilidade
   const visiblePickups = await db.query.pickupTable.findMany({
@@ -76,39 +77,77 @@ const ClientsPage = async () => {
   const clients = await db.query.clientsTable.findMany({
     where: isGeneralManager
       ? eq(clientsTable.companyId, companyId)
-      : and(
-          eq(clientsTable.companyId, companyId),
-          visiblePickupIds.length > 0
-            ? inArray(clientsTable.pickupId, visiblePickupIds)
-            : eq(clientsTable.id, "00000000-0000-0000-0000-000000000000"), // força vazio quando sem pickups
-        ),
+      : userRole === "pickup"
+        ? and(
+            eq(clientsTable.companyId, companyId),
+            visiblePickupIds.length > 0
+              ? inArray(clientsTable.pickupId, visiblePickupIds)
+              : eq(
+                  clientsTable.id,
+                  "00000000-0000-0000-0000-000000000000",
+                )
+          )
+        : eq(clientsTable.companyId, companyId),
   });
 
   const pickups = visiblePickups;
 
-  // Buscar vendedores da empresa
+  // Buscar vendedores da empresa, respeitando visibilidade por role
   const sellers = await db.query.salespersonTable.findMany({
-    where: eq(salespersonTable.companyId, companyId),
+    where: isGeneralManager
+      ? eq(salespersonTable.companyId, companyId)
+      : userRole === "pickup"
+        ? and(
+            eq(salespersonTable.companyId, companyId),
+            visiblePickupIds.length > 0
+              ? inArray(salespersonTable.pickupId, visiblePickupIds)
+              : eq(
+                  salespersonTable.id,
+                  "00000000-0000-0000-0000-000000000000",
+                )
+          )
+        : and(
+            eq(salespersonTable.companyId, companyId),
+            eq(salespersonTable.name, session.user.name || ""),
+          ),
     columns: { id: true, name: true },
   });
 
-  // Buscar negociações para mapear clientes -> vendedores
+  // Buscar negociações para obter vendedor selecionado (mais recente) por cliente
   const negociations = await db.query.negociationsTable.findMany({
     where: eq(negociationsTable.companyId, companyId),
-    columns: { clientId: true, salespersonId: true },
+    columns: { clientId: true, salespersonId: true, createdAt: true },
   });
 
-  // Mapear quais vendedores têm negociações com cada cliente
-  const clientSellerMap: Record<string, string[]> = {};
+  // Selecionar somente o vendedor mais recente por cliente
+  const latestByClient = new Map<string, { salespersonId: string; createdAt: Date }>();
   for (const n of negociations) {
-    if (!n.clientId || !n.salespersonId) continue;
-    const list =
-      clientSellerMap[n.clientId] ?? (clientSellerMap[n.clientId] = []);
-    if (!list.includes(n.salespersonId)) list.push(n.salespersonId);
+    if (!n.clientId || !n.salespersonId || !n.createdAt) continue;
+    const existing = latestByClient.get(n.clientId);
+    if (!existing || n.createdAt > existing.createdAt) {
+      latestByClient.set(n.clientId, {
+        salespersonId: n.salespersonId,
+        createdAt: n.createdAt,
+      });
+    }
   }
+  const clientSelectedSellerMap: Record<string, string> = {};
+  latestByClient.forEach((val, clientId) => {
+    clientSelectedSellerMap[clientId] = val.salespersonId;
+  });
+
+  // Restringir clientes conforme vendedor logado (quando não é gerente)
+  const allowedSellerIds = sellers.map((s) => s.id);
+  const serverVisibleClients =
+    isGeneralManager || userRole === "pickup"
+      ? clients
+      : clients.filter((client) => {
+          const sellerId = clientSelectedSellerMap[client.id];
+          return !!sellerId && allowedSellerIds.includes(sellerId);
+        });
 
   // Transformar os dados para o formato esperado pelo componente
-  const formattedClients = clients.map((client) => ({
+  const formattedClients = serverVisibleClients.map((client) => ({
     ...client,
     entrance: client.entrance ?? 0,
     createdAt: client.createdAt.toISOString(),
@@ -125,7 +164,7 @@ const ClientsPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddClientButton pickups={pickups} />
+          <AddClientButton pickups={pickups} sellers={sellers} />
         </PageActions>
       </PageHeader>
       <PageContent>
@@ -134,7 +173,7 @@ const ClientsPage = async () => {
           companyId={companyId}
           pickups={pickups}
           sellers={sellers}
-          clientSellerMap={clientSellerMap}
+          clientSelectedSellerMap={clientSelectedSellerMap}
         />
       </PageContent>
     </PageContainer>

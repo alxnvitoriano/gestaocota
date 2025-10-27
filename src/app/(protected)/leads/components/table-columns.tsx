@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { clientsTable, pickupTable } from "@/db/schema";
+import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 
 import ClientsTableActions from "./table-actions";
 
@@ -15,6 +15,8 @@ function formatCurrency(cents: number) {
 
 export const getClientsTableColumns = (
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[],
+  sellers?: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[],
+  clientSelectedSellerMap?: Record<string, string | undefined>,
 ): ColumnDef<typeof clientsTable.$inferSelect>[] => [
   {
     id: "name",
@@ -51,6 +53,16 @@ export const getClientsTableColumns = (
     },
   },
   {
+    id: "salesperson",
+    header: "Vendedor",
+    cell: ({ row }) => {
+      const sellerId = clientSelectedSellerMap?.[row.original.id];
+      if (!sellerId) return "—";
+      const name = sellers?.find((s) => s.id === sellerId)?.name;
+      return name ?? "—";
+    },
+  },
+  {
     id: "entrance",
     accessorKey: "entrance",
     header: "Entrada",
@@ -63,7 +75,13 @@ export const getClientsTableColumns = (
     id: "actions",
     cell: (params) => {
       const client = params.row.original;
-      return <ClientsTableActions client={client} pickups={pickups} />;
+      return (
+        <ClientsTableActions
+          client={client}
+          pickups={pickups}
+          sellers={sellers}
+        />
+      );
     },
   },
 ];

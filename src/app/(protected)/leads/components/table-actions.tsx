@@ -26,16 +26,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { clientsTable, pickupTable } from "@/db/schema";
+import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 
 import UpsertClientForm from "./upsert-client-form";
 
 interface ClientsTableActionsProps {
   client: typeof clientsTable.$inferSelect;
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  sellers?: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
 }
 
-const ClientsTableActions = ({ client, pickups }: ClientsTableActionsProps) => {
+const ClientsTableActions = ({ client, pickups, sellers = [] }: ClientsTableActionsProps) => {
   const [upsertDialogIsOpen, setUpsertDialogIsOpen] = useState(false);
   const [deleteDialogIsOpen, setDeleteDialogIsOpen] = useState(false);
   const deleteClientAction = useAction(deleteClient, {
@@ -72,6 +73,7 @@ const ClientsTableActions = ({ client, pickups }: ClientsTableActionsProps) => {
         isOpen={upsertDialogIsOpen}
         client={client}
         pickups={pickups}
+        sellers={sellers}
         onSuccess={() => setUpsertDialogIsOpen(false)}
       />
       {/* Confirmar exclusão */}

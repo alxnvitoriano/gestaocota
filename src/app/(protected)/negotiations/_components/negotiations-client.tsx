@@ -25,6 +25,10 @@ type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
   client: {
     id: string;
     name: string;
+    pickup?: {
+      id: string;
+      name: string;
+    } | null;
   } | null;
   salesperson: {
     id: string;
@@ -37,6 +41,7 @@ interface NegociationsClientProps {
   companyId: string;
   clients: SimpleClient[];
   sellers: SimpleSeller[];
+  pickups: { id: string; name: string }[];
 }
 
 export function NegociationsClient({
@@ -44,6 +49,7 @@ export function NegociationsClient({
   companyId,
   clients,
   sellers,
+  pickups,
 }: NegociationsClientProps) {
   const [filteredNegociations, setFilteredNegociations] =
     useState<NegociationWithRelations[]>(negociations);
@@ -85,7 +91,7 @@ export function NegociationsClient({
 
       <div className="rounded-md border">
         <DataTable
-          columns={createNegociationsTableColumns(clients, sellers)}
+          columns={createNegociationsTableColumns(clients, sellers, pickups)}
           data={filteredNegociations}
         />
       </div>

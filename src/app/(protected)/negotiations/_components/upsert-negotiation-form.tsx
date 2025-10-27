@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { clientsTable, negociationsTable, salespersonTable } from "@/db/schema";
+import { clientsTable, negociationsTable, pickupTable, salespersonTable } from "@/db/schema";
 
 import { upsertNegotiationAction } from "../../actions/upsert-negociation";
 import { upsertNegotiationSchema } from "../../actions/upsert-negociation/schema";
@@ -41,7 +41,8 @@ import { upsertNegotiationSchema } from "../../actions/upsert-negociation/schema
 interface UpsertNegociationFormProps {
   clients: Pick<typeof clientsTable.$inferSelect, "id" | "name">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
-  negociation?: Pick<
+  pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  negociation?: (Pick<
     typeof negociationsTable.$inferSelect,
     | "id"
     | "createdAt"
@@ -52,7 +53,10 @@ interface UpsertNegociationFormProps {
     | "negociationStatus"
     | "negociationResult"
     | "negociationValue"
-  >;
+    | "observation"
+  > & {
+    client?: { id: string; name: string; pickup?: { id: string; name: string } | null } | null;
+  }) | undefined;
   onSuccess?: () => void;
 }
 
@@ -60,6 +64,7 @@ const UpsertNegociationForm = ({
   onSuccess,
   clients,
   sellers,
+  pickups,
   negociation,
 }: UpsertNegociationFormProps) => {
   type NegotiationStatus = z.infer<
@@ -83,6 +88,8 @@ const UpsertNegociationForm = ({
       negociationResult: negociation?.negociationResult || undefined,
       negociationValue: negociation?.negociationValue || 0,
       administrator: undefined,
+      observation: negociation?.observation || "",
+      pickupId: negociation?.client?.pickup?.id || "",
     },
   });
 
@@ -174,6 +181,30 @@ const UpsertNegociationForm = ({
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="pickupId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Captador</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione um captador" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {pickups.map((pickup) => (
+                          <SelectItem key={pickup.id} value={pickup.id}>
+                            {pickup.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -243,6 +274,25 @@ const UpsertNegociationForm = ({
                     <Input
                       type="text"
                       placeholder="Ex: Aceito"
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="observation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Observação</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Adicione observações"
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                     />
