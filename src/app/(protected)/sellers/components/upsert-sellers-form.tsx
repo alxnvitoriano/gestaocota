@@ -57,7 +57,7 @@ const UpsertSellersForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller?.name || "",
-      pickupId: seller?.pickupId || "",
+      pickupId: seller?.pickupId || undefined,
       id: seller?.id || undefined,
       userId: "",
     },
@@ -85,7 +85,7 @@ const UpsertSellersForm = ({
     if (isOpen) {
       form.reset({
         name: seller?.name || "",
-        pickupId: seller?.pickupId || "",
+        pickupId: seller?.pickupId || undefined,
         id: seller?.id || undefined,
         userId: "",
       });
