@@ -26,9 +26,10 @@ import UpsertSellersForm from "./upsert-sellers-form";
 interface SellerCardProps {
   seller: typeof salespersonTable.$inferSelect;
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  eligibleUsers: { id: string; name: string; email: string }[];
 }
 
-const SellerCard = ({ seller, pickups }: SellerCardProps) => {
+const SellerCard = ({ seller, pickups, eligibleUsers }: SellerCardProps) => {
   const sellerInitials = seller.name
     .split(" ")
     .map((name) => name[0])
@@ -72,6 +73,7 @@ const SellerCard = ({ seller, pickups }: SellerCardProps) => {
             seller={{ ...seller, avatarImageUrl: null }}
             isOpen={true}
             pickups={pickups}
+            eligibleUsers={eligibleUsers}
           />
         </Dialog>
         {seller && (

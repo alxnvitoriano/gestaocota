@@ -14,7 +14,7 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 import { db } from "@/db";
-import { pickupTable, salespersonTable } from "@/db/schema";
+import { pickupTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddSellersButton from "./components/add-sellers";
@@ -49,14 +49,43 @@ const SellersPage = async () => {
     );
   }
 
+  // Verifica a role do usuário atual na empresa
+  const meMember = await db.query.member.findFirst({
+    where: (fields, { and, eq }) =>
+      and(eq(fields.companyId, companyId), eq(fields.userId, session.user.id)),
+    columns: { role: true },
+  });
+  const isGeneralManager = meMember?.role === "general_manager";
+
   const sellers = await db.query.salespersonTable.findMany({
-    where: eq(salespersonTable.companyId, companyId),
+    where: (fields, { and, eq }) =>
+      isGeneralManager
+        ? eq(fields.companyId, companyId)
+        : and(
+            eq(fields.companyId, companyId),
+            eq(fields.name, session.user.name || ""),
+          ),
   });
 
   const pickups = await db.query.pickupTable.findMany({
     where: eq(pickupTable.companyId, companyId),
     columns: { id: true, name: true },
   });
+
+  // Buscar membros elegíveis com cargo 'salesperson' na empresa
+  const members = await db.query.member.findMany({
+    where: (fields, { and, eq }) =>
+      and(eq(fields.companyId, companyId), eq(fields.role, "salesperson")),
+    with: { user: true },
+  });
+  const eligibleUsers = members
+    .filter((m) => !!m.user)
+    .map((m) => ({
+      id: m.user!.id,
+      name: m.user!.name,
+      email: m.user!.email,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <PageContainer>
@@ -68,12 +97,16 @@ const SellersPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddSellersButton pickups={pickups} />
+          <AddSellersButton pickups={pickups} eligibleUsers={eligibleUsers} />
         </PageActions>
       </PageHeader>
       <PageContent>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
-        <SellersClient sellers={sellers} pickups={pickups} />
+        <SellersClient
+          sellers={sellers}
+          pickups={pickups}
+          eligibleUsers={eligibleUsers}
+        />
       </PageContent>
     </PageContainer>
   );

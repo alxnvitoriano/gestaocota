@@ -41,6 +41,7 @@ interface UpsertSellersProps {
   isOpen: boolean;
   seller?: typeof salespersonTable.$inferSelect;
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  eligibleUsers?: { id: string; name: string; email: string }[];
   onSuccess?: () => void;
 }
 
@@ -48,6 +49,7 @@ const UpsertSellersForm = ({
   isOpen,
   seller,
   pickups,
+  eligibleUsers = [],
   onSuccess,
 }: UpsertSellersProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,8 +57,9 @@ const UpsertSellersForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: seller?.name || "",
-      pickupId: seller?.pickupId || undefined,
+      pickupId: seller?.pickupId || "",
       id: seller?.id || undefined,
+      userId: "",
     },
   });
 
@@ -82,8 +85,9 @@ const UpsertSellersForm = ({
     if (isOpen) {
       form.reset({
         name: seller?.name || "",
-        pickupId: seller?.pickupId || undefined,
+        pickupId: seller?.pickupId || "",
         id: seller?.id || undefined,
+        userId: "",
       });
     }
   }, [isOpen, form, seller]);
@@ -92,6 +96,9 @@ const UpsertSellersForm = ({
     upsertSellerAction.execute({
       ...values,
       id: seller?.id,
+      // Converte strings vazias para undefined para passar na validação Zod
+      pickupId: values.pickupId || undefined,
+      userId: values.userId || undefined,
     });
   };
 
@@ -109,6 +116,31 @@ const UpsertSellersForm = ({
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            name="userId"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Vendedor (membro com cargo salesperson)</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione um membro vendedor" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {eligibleUsers.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>
+                        {u.name} ({u.email})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             name="name"
             control={form.control}

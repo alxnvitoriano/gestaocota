@@ -10,9 +10,10 @@ import UpsertSellersForm from "./upsert-sellers-form";
 
 interface AddSellersButtonProps {
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  eligibleUsers: { id: string; name: string; email: string }[];
 }
 
-const AddSellersButton = ({ pickups }: AddSellersButtonProps) => {
+const AddSellersButton = ({ pickups, eligibleUsers }: AddSellersButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -27,6 +28,7 @@ const AddSellersButton = ({ pickups }: AddSellersButtonProps) => {
         onSuccess={() => setIsOpen(false)}
         isOpen={isOpen}
         pickups={pickups}
+        eligibleUsers={eligibleUsers}
       />
     </Dialog>
   );

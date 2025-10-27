@@ -10,9 +10,10 @@ import SellerCard from "./seller-card";
 interface SellersClientProps {
   sellers: typeof salespersonTable.$inferSelect[];
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
+  eligibleUsers: { id: string; name: string; email: string }[];
 }
 
-export default function SellersClient({ sellers, pickups }: SellersClientProps) {
+export default function SellersClient({ sellers, pickups, eligibleUsers }: SellersClientProps) {
   const [term, setTerm] = useState("");
 
   const filtered = useMemo(() => {
@@ -31,7 +32,7 @@ export default function SellersClient({ sellers, pickups }: SellersClientProps) 
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filtered.map((seller) => (
-          <SellerCard key={seller.id} seller={seller} pickups={pickups} />
+          <SellerCard key={seller.id} seller={seller} pickups={pickups} eligibleUsers={eligibleUsers} />
         ))}
       </div>
     </div>
