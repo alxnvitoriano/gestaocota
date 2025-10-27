@@ -14,7 +14,7 @@ import {
   PageTitle,
 } from "@/components/ui/page-container";
 import { db } from "@/db";
-import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
+import { clientsTable, negociationsTable, pickupTable, salespersonTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AddNegotiationButton from "./_components/add-negotiation-button";
@@ -74,6 +74,7 @@ const NegotiationsPage = async () => {
   });
   const isGeneralManager = meMember?.role === "general_manager";
   const isPickup = meMember?.role === "pickup";
+  let myPickupId: string | null = null;
 
   // Buscar vendedores permitidos conforme a role
   let sellers = await db.query.salespersonTable.findMany({
@@ -92,10 +93,12 @@ const NegotiationsPage = async () => {
           ),
         columns: { id: true, name: true },
       });
-      const myPickupId = myPickup?.id ?? null;
+      myPickupId = myPickup?.id ?? null;
       sellers = sellers.filter((s) => s.pickupId === myPickupId);
       // Restringe captadores apenas ao do usuário
-      pickups = myPickup ? [{ id: myPickup.id, name: myPickup.name, userId: session.user.id }] : [];
+      pickups = myPickup
+        ? [{ id: myPickup.id, name: myPickup.name, userId: session.user.id }]
+        : [];
     } else {
       // Vendedor comum vê apenas a si mesmo (associação via nome do usuário)
       const myName = session.user.name || "";
@@ -103,16 +106,10 @@ const NegotiationsPage = async () => {
     }
   }
 
-  // Buscar negociações com filtro por vendedores permitidos
+  // Buscar negociações da empresa e aplicar filtro por role
   const allowedSellerIds = sellers.map((s) => s.id);
-  const negociations = await db.query.negociationsTable.findMany({
-    where: (fields, { and, eq, inArray }) =>
-      isGeneralManager
-        ? eq(fields.companyId, companyId)
-        : and(
-            eq(fields.companyId, companyId),
-            inArray(fields.salespersonId, allowedSellerIds),
-          ),
+  const negociationsAll = await db.query.negociationsTable.findMany({
+    where: eq(negociationsTable.companyId, companyId),
     with: {
       client: {
         columns: { id: true, name: true },
@@ -121,6 +118,22 @@ const NegotiationsPage = async () => {
       salesperson: { columns: { id: true, name: true } },
     },
   });
+
+  const negociations = isGeneralManager
+    ? negociationsAll
+    : isPickup
+      ? negociationsAll.filter(
+          (n) =>
+            (myPickupId && n.client?.pickup?.id === myPickupId) ||
+            (n.salesperson?.id
+              ? allowedSellerIds.includes(n.salesperson.id)
+              : false),
+        )
+      : negociationsAll.filter((n) =>
+          n.salesperson?.id
+            ? allowedSellerIds.includes(n.salesperson.id)
+            : false,
+        );
 
   return (
     <PageContainer>

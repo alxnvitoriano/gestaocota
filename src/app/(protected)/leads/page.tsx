@@ -60,10 +60,11 @@ const ClientsPage = async () => {
   });
   const userRole = userMember?.role;
   const isGeneralManager = userRole === "general_manager";
+  const isSalesperson = userRole === "salesperson";
 
   // Limitar pickups conforme visibilidade
   const visiblePickups = await db.query.pickupTable.findMany({
-    where: isGeneralManager
+    where: isGeneralManager || isSalesperson
       ? eq(pickupTable.companyId, companyId)
       : and(
           eq(pickupTable.companyId, companyId),
