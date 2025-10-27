@@ -116,23 +116,27 @@ export function DashboardClient({
         ))}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Vendedores</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={sellerColumns} data={sellerStats} />
-        </CardContent>
-      </Card>
+      {sellerStats.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Vendedores</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={sellerColumns} data={sellerStats} />
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Captadores</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable columns={pickupColumns} data={pickupStats} />
-        </CardContent>
-      </Card>
+      {pickupStats.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Captadores</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable columns={pickupColumns} data={pickupStats} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

@@ -68,7 +68,7 @@ export default async function Page() {
       }),
       db.query.pickupTable.findMany({
         where: eq(pickupTable.companyId, companyId),
-        columns: { id: true, name: true },
+        columns: { id: true, name: true, userId: true },
       }),
       db.query.salespersonTable.findMany({
         where: eq(salespersonTable.companyId, companyId),
@@ -93,6 +93,7 @@ export default async function Page() {
     columns: { role: true },
   });
   const isSalesperson = meMember?.role === "salesperson";
+  const isPickup = meMember?.role === "pickup";
 
   const totalNegotiations = negociations.length;
   const acceptedNegotiations = negociations.filter(
@@ -125,7 +126,9 @@ export default async function Page() {
   // Se o usuário for vendedor (salesperson), mostrar apenas suas estatísticas
   const visibleSellers = isSalesperson
     ? sellers.filter((s) => s.name === (session.user.name || ""))
-    : sellers;
+    : isPickup
+      ? []
+      : sellers;
 
   const sellerStats = visibleSellers.map((s) => {
     const sNeg = negociations.filter((n) => n.salespersonId === s.id);
@@ -142,7 +145,13 @@ export default async function Page() {
     };
   });
 
-  const pickupStats = pickups.map((p) => {
+  const visiblePickups = isPickup
+    ? pickups.filter((p) => p.userId === session.user.id)
+    : isSalesperson
+      ? []
+      : pickups;
+
+  const pickupStats = visiblePickups.map((p) => {
     const pLeads = clients.filter((c) => c.pickupId === p.id).length;
     return { id: p.id, name: p.name, leads: pLeads };
   });
