@@ -15,6 +15,7 @@ import {
 import { db } from "@/db";
 import { member } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { compareStrings } from "@/lib/utils";
 
 import { CompanyButton } from "./componentss/company-button";
 import TeamMembersTable from "./componentss/team-members-table";
@@ -54,8 +55,14 @@ const TeamPage = async () => {
         },
       },
     },
+    // Mantemos a ordenação primária por createdAt no banco
     orderBy: (member, { asc }) => [asc(member.createdAt)],
   });
+
+  // Ordenar alfabeticamente por nome do usuário (pt-BR), para melhor UX
+  const sortedMembers = [...teamMembers].sort((a, b) =>
+    compareStrings(a.user?.name ?? "", b.user?.name ?? ""),
+  );
 
   // Verificar se o usuário logado pode editar cargos (apenas gerente geral)
   const roleEditPermission = await canUpdateMemberRole(session.user.company.id);
@@ -74,7 +81,7 @@ const TeamPage = async () => {
       </PageHeader>
       <PageContent>
         <TeamMembersTable
-          members={teamMembers}
+          members={sortedMembers}
           companyId={session.user.company.id}
           canEditRoles={canEditRoles}
         />
