@@ -16,6 +16,7 @@ import {
 import { db } from "@/db";
 import { pickupTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { compareStrings } from "@/lib/utils";
 
 import AddPickupButton from "./components/add-pickup";
 import PickupsClient from "./components/pickups-client";
@@ -51,14 +52,18 @@ const PickupPage = async () => {
 
   // Verificar role do usuário na empresa
   const userMember = await db.query.member.findFirst({
-    where: (m, { and, eq }) => and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
+    where: (m, { and, eq }) =>
+      and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
   const isGeneralManager = userMember?.role === "general_manager";
 
   const pickups = await db.query.pickupTable.findMany({
     where: isGeneralManager
       ? eq(pickupTable.companyId, companyId)
-      : and(eq(pickupTable.companyId, companyId), eq(pickupTable.userId, session.user.id)),
+      : and(
+          eq(pickupTable.companyId, companyId),
+          eq(pickupTable.userId, session.user.id),
+        ),
   });
 
   // Buscar membros com role 'pickup' para seleção
@@ -75,7 +80,7 @@ const PickupPage = async () => {
       email: m.user?.email ?? "",
     }))
     // Ordena por nome para melhor UX
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => compareStrings(a.name, b.name));
 
   return (
     <PageContainer>

@@ -16,6 +16,7 @@ import {
 import { db } from "@/db";
 import { pickupTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { compareStrings } from "@/lib/utils";
 
 import AddSellersButton from "./components/add-sellers";
 import SellersClient from "./components/sellers-client";
@@ -85,7 +86,7 @@ const SellersPage = async () => {
       name: m.user!.name,
       email: m.user!.email,
     }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((a, b) => compareStrings(a.name, b.name));
 
   return (
     <PageContainer>
