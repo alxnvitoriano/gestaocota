@@ -34,7 +34,7 @@ export const upsertClient = actionClient
         .update(clientsTable)
         .set({
           name: parsedInput.name,
-          cpf: parsedInput.cpf,
+          cpf: parsedInput.cpf || null,
           indication: parsedInput.indication,
           annuncio: parsedInput.annuncio,
           desire: parsedInput.desire,
@@ -49,7 +49,7 @@ export const upsertClient = actionClient
         .insert(clientsTable)
         .values({
           name: parsedInput.name,
-          cpf: parsedInput.cpf,
+          cpf: parsedInput.cpf || null,
           indication: parsedInput.indication,
           annuncio: parsedInput.annuncio,
           desire: parsedInput.desire,

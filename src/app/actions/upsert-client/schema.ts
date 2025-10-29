@@ -10,10 +10,11 @@ export const upsertClientSchema = z.object({
   cpf: z
     .string()
     .trim()
-    .min(11, "CPF é obrigatório")
-    .max(11)
-    .regex(/^\d{11}$/, "CPF inválido")
-    .optional(),
+    .optional()
+    .refine(
+      (v) => v === undefined || v === "" || /^\d{11}$/.test(v),
+      "CPF inválido",
+    ),
   entranceValue: z
     .number()
     .int()

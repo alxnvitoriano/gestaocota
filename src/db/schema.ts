@@ -298,7 +298,7 @@ export const clientsTable = pgTable("clients", {
     onDelete: "set null",
   }),
   name: text("name").notNull(),
-  cpf: text("cpf").notNull(),
+  cpf: text("cpf"),
   indication: text("indication"),
   annuncio: text("annuncio"),
   desire: text("desire"),
