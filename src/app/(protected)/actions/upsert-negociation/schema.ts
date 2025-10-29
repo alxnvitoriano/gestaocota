@@ -14,7 +14,8 @@ export const upsertNegotiationSchema = z.object({
   ]),
   negociationValue: z
     .number()
-    .min(0, "Valor da negociação deve ser maior ou igual a zero"),
+    .min(0, "Valor da negociação deve ser maior ou igual a zero")
+    .optional(),
   negociationResult: z.string().optional(),
   administrator: z.enum(["Evoy", "Alpha", "Reserva", "Eutbem"]).optional(),
   observation: z.string().optional(),
