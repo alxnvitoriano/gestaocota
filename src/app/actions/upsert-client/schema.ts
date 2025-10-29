@@ -12,7 +12,8 @@ export const upsertClientSchema = z.object({
     .trim()
     .min(11, "CPF é obrigatório")
     .max(11)
-    .regex(/^\d{11}$/, "CPF inválido"),
+    .regex(/^\d{11}$/, "CPF inválido")
+    .optional(),
   entranceValue: z
     .number()
     .int()
