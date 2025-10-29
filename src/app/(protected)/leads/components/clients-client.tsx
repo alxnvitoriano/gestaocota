@@ -20,7 +20,6 @@ interface Client {
   companyId: string | null;
   pickupId: string | null;
   name: string;
-  cpf: string | null;
   entrance: number | null;
   phone: string | null;
   desire: string | null;
