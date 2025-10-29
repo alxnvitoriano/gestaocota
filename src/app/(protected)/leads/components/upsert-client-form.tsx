@@ -238,7 +238,7 @@ const UpsertClientForm = ({
                 <FormItem>
                   <FormLabel>Captador (opcional)</FormLabel>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um captador" />
                       </SelectTrigger>
@@ -262,7 +262,7 @@ const UpsertClientForm = ({
                 <FormItem>
                   <FormLabel>Vendedor (opcional)</FormLabel>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um vendedor" />
                       </SelectTrigger>

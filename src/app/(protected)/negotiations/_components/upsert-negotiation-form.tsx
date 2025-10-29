@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -133,9 +133,7 @@ const UpsertNegociationForm = ({
     },
   );
 
-  const onSubmit: SubmitHandler<z.infer<typeof upsertNegotiationSchema>> = (
-    values,
-  ) => {
+  const onSubmit = (values: z.infer<typeof upsertNegotiationSchema>) => {
     if (readOnly) return;
     upsertNegociation(values);
   };
@@ -343,7 +341,7 @@ const UpsertNegociationForm = ({
                 <FormItem>
                   <FormLabel>Administradora</FormLabel>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
                       <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione uma administradora" />
                       </SelectTrigger>

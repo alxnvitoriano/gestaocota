@@ -122,7 +122,7 @@ const UpsertSellersForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Vendedor (membro com cargo salesperson)</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value ?? ""}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um membro vendedor" />
@@ -161,7 +161,7 @@ const UpsertSellersForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Captador (opcional)</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value ?? ""}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione um captador" />

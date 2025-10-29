@@ -56,7 +56,7 @@ const UpsertPickupForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: pickup?.name || "",
-      userId: pickup?.userId || undefined,
+      userId: pickup?.userId ?? "",
     },
   });
 
@@ -81,7 +81,7 @@ const UpsertPickupForm = ({
     if (isOpen) {
       form.reset({
         name: pickup?.name || "",
-        userId: pickup?.userId || undefined,
+        userId: pickup?.userId ?? "",
       });
     }
   }, [isOpen, form, pickup]);
@@ -124,7 +124,7 @@ const UpsertPickupForm = ({
                   <FormLabel>Usuario Captador</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value ?? ""}
                   >
                     <FormControl>
                       <SelectTrigger>
