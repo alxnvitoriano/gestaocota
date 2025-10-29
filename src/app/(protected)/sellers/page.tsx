@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -56,6 +56,7 @@ const SellersPage = async () => {
       and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
   const isSalesperson = userMember?.role === "salesperson";
+  const isPickup = userMember?.role === "pickup";
 
   // Verifica a role do usuário atual na empresa
   const meMember = await db.query.member.findFirst({
@@ -76,7 +77,13 @@ const SellersPage = async () => {
   });
 
   const pickups = await db.query.pickupTable.findMany({
-    where: eq(pickupTable.companyId, companyId),
+    where:
+      isGeneralManager || isSalesperson
+        ? eq(pickupTable.companyId, companyId)
+        : and(
+            eq(pickupTable.companyId, companyId),
+            eq(pickupTable.userId, session.user.id),
+          ),
     columns: { id: true, name: true },
   });
 
