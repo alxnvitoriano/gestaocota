@@ -68,11 +68,12 @@ export const createNegociationsTableColumns = (
     header: "Status da Negociação",
     cell: ({ row }) => {
       const STATUS_LABELS: Record<string, string> = {
-        pending: "Cotação",
-        accepted: "Documentação",
+        cotacion: "Cotação",
+        documentation: "Documentação",
         meeting: "Reunião",
         sold: "Vendeu",
-        notInterested: "Não quer consórcio",
+        notInterested: "Desistiu",
+        notCalled: "Não ligou",
         rejected: "Rejeitada",
       };
 
@@ -80,11 +81,12 @@ export const createNegociationsTableColumns = (
         string,
         "default" | "secondary" | "destructive" | "outline"
       > = {
-        pending: "secondary",
-        accepted: "default",
+        cotacion: "secondary",
+        documentation: "default",
         meeting: "outline",
         sold: "default",
         notInterested: "destructive",
+        notCalled: "destructive",
         rejected: "destructive",
       };
 
