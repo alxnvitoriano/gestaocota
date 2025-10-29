@@ -81,9 +81,9 @@ export const createNegociationsTableColumns = (
         string,
         "default" | "secondary" | "destructive" | "outline"
       > = {
-        cotacion: "secondary",
+        cotacion: "default",
         documentation: "default",
-        meeting: "outline",
+        meeting: "default",
         sold: "default",
         notInterested: "destructive",
         notCalled: "destructive",
