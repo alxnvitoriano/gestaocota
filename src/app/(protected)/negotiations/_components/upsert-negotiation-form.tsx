@@ -33,7 +33,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { clientsTable, negociationsTable, pickupTable, salespersonTable } from "@/db/schema";
+import {
+  clientsTable,
+  negociationsTable,
+  pickupTable,
+  salespersonTable,
+} from "@/db/schema";
 
 import { upsertNegotiationAction } from "../../actions/upsert-negociation";
 import { upsertNegotiationSchema } from "../../actions/upsert-negociation/schema";
@@ -43,21 +48,27 @@ interface UpsertNegociationFormProps {
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   readOnly?: boolean;
-  negociation?: (Pick<
-    typeof negociationsTable.$inferSelect,
-    | "id"
-    | "createdAt"
-    | "updatedAt"
-    | "companyId"
-    | "clientId"
-    | "salespersonId"
-    | "negociationStatus"
-    | "negociationResult"
-    | "negociationValue"
-    | "observation"
-  > & {
-    client?: { id: string; name: string; pickup?: { id: string; name: string } | null } | null;
-  }) | undefined;
+  negociation?:
+    | (Pick<
+        typeof negociationsTable.$inferSelect,
+        | "id"
+        | "createdAt"
+        | "updatedAt"
+        | "companyId"
+        | "clientId"
+        | "salespersonId"
+        | "negociationStatus"
+        | "negociationResult"
+        | "negociationValue"
+        | "observation"
+      > & {
+        client?: {
+          id: string;
+          name: string;
+          pickup?: { id: string; name: string } | null;
+        } | null;
+      })
+    | undefined;
   onSuccess?: () => void;
 }
 
@@ -228,7 +239,7 @@ const UpsertNegociationForm = ({
                     <NumericFormat
                       customInput={Input}
                       thousandSeparator="."
-                      decimalSeparator="," 
+                      decimalSeparator=","
                       prefix="R$ "
                       decimalScale={2}
                       fixedDecimalScale
@@ -262,9 +273,13 @@ const UpsertNegociationForm = ({
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Pendente</SelectItem>
-                        <SelectItem value="accepted">Aceita</SelectItem>
-                        <SelectItem value="rejected">Recusada</SelectItem>
+                        <SelectItem value="pending">Cotação</SelectItem>
+                        <SelectItem value="accepted">Documentação</SelectItem>
+                        <SelectItem value="rejected">Reunião</SelectItem>
+                        <SelectItem value="rejected">Vendeu</SelectItem>
+                        <SelectItem value="rejected">
+                          Não quer consorcio
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -280,11 +295,11 @@ const UpsertNegociationForm = ({
               name="negociationResult"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Resultado da negociação</FormLabel>
+                  <FormLabel>Negociação</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
-                      placeholder="Ex: Aceito"
+                      placeholder="Veiculo"
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       disabled={readOnly}
@@ -342,7 +357,9 @@ const UpsertNegociationForm = ({
           {!readOnly && (
             <DialogFooter>
               <Button type="submit" disabled={isExecuting}>
-                {isExecuting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isExecuting && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {negociation ? "Atualizar negociação" : "Criar negociação"}
               </Button>
             </DialogFooter>
