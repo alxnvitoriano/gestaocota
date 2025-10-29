@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import dayjs from "dayjs";
 
 import { negociationsTable } from "@/db/schema";
 
@@ -17,9 +18,11 @@ type SimpleSeller = {
 };
 
 type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
-  client:
-    | { id: string; name: string; pickup?: { id: string; name: string } | null }
-    | null;
+  client: {
+    id: string;
+    name: string;
+    pickup?: { id: string; name: string } | null;
+  } | null;
   salesperson: { id: string; name: string } | null;
 };
 
@@ -75,6 +78,24 @@ export const createNegociationsTableColumns = (
     header: "Status da Negociação",
     cell: ({ row }) => {
       return row.getValue("negociationStatus") || "Status não encontrado";
+    },
+  },
+  {
+    id: "createdAt",
+    accessorKey: "createdAt",
+    header: "Criado em",
+    cell: ({ row }) => {
+      const createdAt = row.original.createdAt as Date;
+      return createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—";
+    },
+  },
+  {
+    id: "updatedAt",
+    accessorKey: "updatedAt",
+    header: "Atualizado em",
+    cell: ({ row }) => {
+      const updatedAt = row.original.updatedAt as Date | null;
+      return updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—";
     },
   },
   {

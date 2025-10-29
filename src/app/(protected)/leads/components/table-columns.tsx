@@ -1,6 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import dayjs from "dayjs";
 
 import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 
@@ -69,6 +70,24 @@ export const getClientsTableColumns = (
     cell: ({ row }) => {
       const entranceValue = row.original.entrance || 0;
       return formatCurrency(entranceValue);
+    },
+  },
+  {
+    id: "createdAt",
+    accessorKey: "createdAt",
+    header: "Criado em",
+    cell: ({ row }) => {
+      const createdAt = row.original.createdAt as Date;
+      return createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—";
+    },
+  },
+  {
+    id: "updatedAt",
+    accessorKey: "updatedAt",
+    header: "Atualizado em",
+    cell: ({ row }) => {
+      const updatedAt = row.original.updatedAt as Date | null;
+      return updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—";
     },
   },
   {
