@@ -61,6 +61,7 @@ const ClientsPage = async () => {
   const userRole = userMember?.role;
   const isGeneralManager = userRole === "general_manager";
   const isSalesperson = userRole === "salesperson";
+  const isPickup = userRole === "pickup";
 
   // Limitar pickups conforme visibilidade
   const visiblePickups = await db.query.pickupTable.findMany({
@@ -168,6 +169,7 @@ const ClientsPage = async () => {
           pickups={pickups}
           sellers={sellers}
           clientSelectedSellerMap={clientSelectedSellerMap}
+          isPickup={isPickup}
         />
       </PageContent>
     </PageContainer>

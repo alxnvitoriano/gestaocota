@@ -36,6 +36,7 @@ interface ClientsClientProps {
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   clientSelectedSellerMap: Record<string, string | undefined>;
+  isPickup: boolean;
 }
 
 export function ClientsClient({
@@ -43,10 +44,11 @@ export function ClientsClient({
   pickups,
   sellers,
   clientSelectedSellerMap,
+  isPickup,
 }: ClientsClientProps) {
   const [filteredClients, setFilteredClients] = useState<Client[]>(clients);
   const [selectedPickupId, setSelectedPickupId] = useState<string | undefined>(
-    undefined,
+    isPickup ? pickups[0]?.id ?? undefined : undefined,
   );
   const [selectedSellerId, setSelectedSellerId] = useState<string | undefined>(
     undefined,
@@ -91,7 +93,7 @@ export function ClientsClient({
               <SelectValue placeholder="Filtrar por captador" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
+              {!isPickup && <SelectItem value="all">Todos</SelectItem>}
               {pickups.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.name}
