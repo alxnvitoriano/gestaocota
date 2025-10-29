@@ -68,7 +68,9 @@ export const createNegociationsTableColumns = (
     header: "Status da Negociação",
     cell: ({ row }) => {
       const STATUS_LABELS: Record<string, string> = {
+        pending: "Pendente",
         cotacion: "Cotação",
+        Called: "Ligou",
         documentation: "Documentação",
         meeting: "Reunião",
         sold: "Vendeu",
