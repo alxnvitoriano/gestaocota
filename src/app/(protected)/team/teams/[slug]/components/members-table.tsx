@@ -13,9 +13,10 @@ import MembersTableActions from "./members-table-actions";
 interface MembersTableProps {
   members: Member[];
   companyId: string;
+  canRemove: boolean;
 }
 
-export default function MembersTable({ members, companyId }: MembersTableProps) {
+export default function MembersTable({ members, companyId, canRemove }: MembersTableProps) {
   return (
     <Table>
       <TableHeader>
@@ -33,7 +34,11 @@ export default function MembersTable({ members, companyId }: MembersTableProps) 
             <TableCell>{member.user?.email}</TableCell>
             <TableCell>{member.role}</TableCell>
             <TableCell className="text-right">
-              <MembersTableActions memberId={member.id} companyId={companyId} />
+              <MembersTableActions
+                memberId={member.id}
+                companyId={companyId}
+                canRemove={canRemove}
+              />
             </TableCell>
           </TableRow>
         ))}
