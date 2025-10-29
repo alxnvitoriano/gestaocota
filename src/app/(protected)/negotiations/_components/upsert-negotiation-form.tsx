@@ -275,9 +275,9 @@ const UpsertNegociationForm = ({
                       <SelectContent>
                         <SelectItem value="pending">Cotação</SelectItem>
                         <SelectItem value="accepted">Documentação</SelectItem>
-                        <SelectItem value="rejected">Reunião</SelectItem>
-                        <SelectItem value="rejected">Vendeu</SelectItem>
-                        <SelectItem value="rejected">
+                        <SelectItem value="meeting">Reunião</SelectItem>
+                        <SelectItem value="sold">Vendeu</SelectItem>
+                        <SelectItem value="notInterested">
                           Não quer consorcio
                         </SelectItem>
                       </SelectContent>
