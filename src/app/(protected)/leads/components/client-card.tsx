@@ -44,7 +44,6 @@ const ClientCard = ({ client, pickups }: ClientCardProps) => {
           </Avatar>
           <div className="text-center">
             <h3 className="text-sm font-medium">{client.name}</h3>
-            <p className="text-muted-foreground text-xs">{client.cpf}</p>
           </div>
         </div>
         <Separator />
