@@ -56,6 +56,7 @@ const PickupPage = async () => {
       and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
   });
   const isGeneralManager = userMember?.role === "general_manager";
+  const isPickup = userMember?.role === "pickup";
 
   const pickups = await db.query.pickupTable.findMany({
     where: isGeneralManager
@@ -92,7 +93,7 @@ const PickupPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddPickupButton eligibleUsers={eligibleUsers} />
+          {!isPickup && <AddPickupButton eligibleUsers={eligibleUsers} />}
         </PageActions>
       </PageHeader>
       <PageContent>
