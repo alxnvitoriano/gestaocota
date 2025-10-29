@@ -6,11 +6,12 @@ export const upsertNegotiationSchema = z.object({
   salespersonId: z.string().uuid("Vendedor é obrigatório"),
   negociationStatus: z.enum([
     "pending",
-    "accepted",
-    "rejected",
+    "cotacion",
+    "documentation",
     "meeting",
     "sold",
     "notInterested",
+    "notCalled",
   ]),
   negociationValue: z
     .number()

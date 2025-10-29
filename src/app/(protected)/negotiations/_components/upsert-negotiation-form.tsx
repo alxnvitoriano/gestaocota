@@ -85,9 +85,12 @@ const UpsertNegociationForm = ({
   >["negociationStatus"];
   const statusValue = negociation?.negociationStatus;
   const defaultStatus: NegotiationStatus =
-    statusValue === "pending" ||
-    statusValue === "accepted" ||
-    statusValue === "rejected"
+    statusValue === "cotacion" ||
+    statusValue === "documentation" ||
+    statusValue === "meeting" ||
+    statusValue === "sold" ||
+    statusValue === "notInterested" ||
+    statusValue === "notCalled"
       ? statusValue
       : "pending";
 
@@ -273,13 +276,14 @@ const UpsertNegociationForm = ({
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Cotação</SelectItem>
-                        <SelectItem value="accepted">Documentação</SelectItem>
+                        <SelectItem value="cotacion">Cotação</SelectItem>
+                        <SelectItem value="documentation">
+                          Documentação
+                        </SelectItem>
                         <SelectItem value="meeting">Reunião</SelectItem>
                         <SelectItem value="sold">Vendeu</SelectItem>
-                        <SelectItem value="notInterested">
-                          Não quer consorcio
-                        </SelectItem>
+                        <SelectItem value="notInterested">Desistiu</SelectItem>
+                        <SelectItem value="notCalled">Não ligou</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
