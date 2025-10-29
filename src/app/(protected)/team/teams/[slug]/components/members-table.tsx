@@ -23,6 +23,7 @@ export default function MembersTable({ members, companyId }: MembersTableProps) 
           <TableHead>Nome</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Permissão</TableHead>
+          <TableHead className="text-right">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
