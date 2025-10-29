@@ -353,33 +353,6 @@ const UpsertNegociationForm = ({
                 </FormItem>
               )}
             />
-            <FormField
-              name="credit"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Crédito</FormLabel>
-                  <FormControl>
-                    <NumericFormat
-                      customInput={Input}
-                      thousandSeparator="."
-                      decimalSeparator=","
-                      allowNegative={false}
-                      decimalScale={2}
-                      fixedDecimalScale
-                      placeholder="0,00"
-                      value={field.value ?? 0}
-                      onValueChange={(values) => {
-                        const raw = Number(values.value || 0);
-                        field.onChange(raw);
-                      }}
-                      onBlur={field.onBlur}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
           {!readOnly && (
             <DialogFooter>
