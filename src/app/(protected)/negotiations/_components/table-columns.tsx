@@ -63,23 +63,6 @@ export const createNegociationsTableColumns = (
     header: "Vendedor",
   },
   {
-    id: "negociationValue",
-    accessorKey: "negociationValue",
-    header: "Valor da Negociação",
-    cell: ({ row }) => {
-      const raw = row.getValue("negociationValue") as number | null | undefined;
-      return formatCurrency(raw);
-    },
-  },
-  {
-    id: "negociationResult",
-    accessorKey: "negociationResult",
-    header: "Resultado da Negociação",
-    cell: ({ row }) => {
-      return row.getValue("negociationResult") || "Resultado não encontrado";
-    },
-  },
-  {
     id: "negociationStatus",
     accessorKey: "negociationStatus",
     header: "Status da Negociação",
@@ -114,6 +97,23 @@ export const createNegociationsTableColumns = (
       const variant = key ? (STATUS_VARIANTS[key] ?? "outline") : "outline";
 
       return <Badge variant={variant}>{label}</Badge>;
+    },
+  },
+  {
+    id: "credit",
+    accessorKey: "credit",
+    header: "Crédito",
+    cell: ({ row }) => {
+      const raw = row.getValue("credit") as number | null | undefined;
+      return formatCurrency(raw);
+    },
+  },
+  {
+    id: "negociationResult",
+    accessorKey: "negociationResult",
+    header: "Resultado da Negociação",
+    cell: ({ row }) => {
+      return row.getValue("negociationResult") || "Resultado não encontrado";
     },
   },
   {
