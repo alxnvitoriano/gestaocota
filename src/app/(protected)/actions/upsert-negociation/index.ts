@@ -24,6 +24,7 @@ export const upsertNegotiationAction = actionClient
         negociationStatus,
         observation,
         pickupId,
+        credit,
       },
     }) => {
       const session = await auth.api.getSession({
@@ -67,6 +68,7 @@ export const upsertNegotiationAction = actionClient
             negociationResult,
             negociationStatus,
             observation,
+            credit,
             updatedAt: new Date(),
           })
           .where(eq(negociationsTable.id, id))
@@ -87,6 +89,7 @@ export const upsertNegotiationAction = actionClient
             negociationResult,
             negociationStatus,
             observation,
+            credit,
           })
           .returning();
       }

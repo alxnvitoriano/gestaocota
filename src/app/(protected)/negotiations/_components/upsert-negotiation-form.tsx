@@ -59,7 +59,7 @@ interface UpsertNegociationFormProps {
         | "salespersonId"
         | "negociationStatus"
         | "negociationResult"
-        | "negociationValue"
+        | "credit"
         | "observation"
       > & {
         client?: {
@@ -99,7 +99,7 @@ const UpsertNegociationForm = ({
       salespersonId: negociation?.salespersonId || "",
       negociationStatus: defaultStatus,
       negociationResult: negociation?.negociationResult || undefined,
-      negociationValue: negociation?.negociationValue || 0,
+      credit: negociation?.credit || 0,
       administrator: undefined,
       observation: negociation?.observation || "",
       pickupId: negociation?.client?.pickup?.id || "",
@@ -231,10 +231,10 @@ const UpsertNegociationForm = ({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
-              name="negociationValue"
+              name="credit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Valor da negociação</FormLabel>
+                  <FormLabel>Crédito</FormLabel>
                   <FormControl>
                     <NumericFormat
                       customInput={Input}
@@ -348,6 +348,33 @@ const UpsertNegociationForm = ({
                         <SelectItem value="Eutbem">Eutbem</SelectItem>
                       </SelectContent>
                     </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="credit"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Crédito</FormLabel>
+                  <FormControl>
+                    <NumericFormat
+                      customInput={Input}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      allowNegative={false}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      placeholder="0,00"
+                      value={field.value ?? 0}
+                      onValueChange={(values) => {
+                        const raw = Number(values.value || 0);
+                        field.onChange(raw);
+                      }}
+                      onBlur={field.onBlur}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

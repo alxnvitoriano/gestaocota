@@ -335,8 +335,8 @@ export const negociationsTable = pgTable("negociations", {
   negociationStatus: text("negociation_status").default("pending").notNull(),
   negociationResult: text("negociation_result"),
   negociationValue: integer("negociation_value"),
-  // Observação livre adicionada à negociação
   observation: text("observation"),
+  credit: integer("credit"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
