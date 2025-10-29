@@ -30,6 +30,16 @@ const TeamPage = async () => {
     redirect("/company-form");
   }
 
+  // Bloquear acesso para cargos 'pickup' (captador) e 'salesperson' (vendedor)
+  const meMember = await db.query.member.findFirst({
+    where: (fields, { and, eq }) =>
+      and(eq(fields.companyId, session.user.company!.id), eq(fields.userId, session.user.id)),
+    columns: { role: true },
+  });
+  if (meMember?.role === "pickup" || meMember?.role === "salesperson") {
+    redirect("/dashboard");
+  }
+
   const companies = await getCompanies();
 
   // Buscar todos os membros da empresa atual

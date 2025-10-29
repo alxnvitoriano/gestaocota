@@ -66,7 +66,9 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+type UserRole = "member" | "salesperson" | "pickup" | "general_manager" | "team_manager" | string | undefined;
+
+export function AppSidebar({ userRole }: { userRole?: UserRole }) {
   const router = useRouter();
   const session = authClient.useSession();
   const pathname = usePathname();
@@ -86,7 +88,15 @@ export function AppSidebar() {
           <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {(items
+                .filter(
+                  (item) =>
+                    !(
+                      item.title === "Equipe" &&
+                      (userRole === "pickup" || userRole === "salesperson")
+                    ),
+                ))
+                .map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
