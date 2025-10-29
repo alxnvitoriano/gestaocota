@@ -86,6 +86,7 @@ const UpsertNegociationForm = ({
   const statusValue = negociation?.negociationStatus;
   const defaultStatus: NegotiationStatus =
     statusValue === "cotacion" ||
+    statusValue === "Called" ||
     statusValue === "documentation" ||
     statusValue === "meeting" ||
     statusValue === "sold" ||
@@ -284,6 +285,7 @@ const UpsertNegociationForm = ({
                         <SelectItem value="sold">Vendeu</SelectItem>
                         <SelectItem value="notInterested">Desistiu</SelectItem>
                         <SelectItem value="notCalled">Não ligou</SelectItem>
+                        <SelectItem value="Called">Ligou</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

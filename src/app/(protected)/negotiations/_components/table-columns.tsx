@@ -87,6 +87,7 @@ export const createNegociationsTableColumns = (
         sold: "default",
         notInterested: "destructive",
         notCalled: "destructive",
+        Called: "default",
         rejected: "destructive",
       };
 
@@ -107,9 +108,7 @@ export const createNegociationsTableColumns = (
     header: "Crédito",
     cell: ({ row }) => {
       const raw = row.getValue("credit") as number | null | undefined;
-      return (
-        <span suppressHydrationWarning>{formatCurrency(raw)}</span>
-      );
+      return <span suppressHydrationWarning>{formatCurrency(raw)}</span>;
     },
   },
   {

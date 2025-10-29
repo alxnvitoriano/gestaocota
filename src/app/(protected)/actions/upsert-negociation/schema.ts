@@ -7,6 +7,7 @@ export const upsertNegotiationSchema = z.object({
   negociationStatus: z.enum([
     "pending",
     "cotacion",
+    "Called",
     "documentation",
     "meeting",
     "sold",
