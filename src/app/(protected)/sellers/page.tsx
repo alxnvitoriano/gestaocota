@@ -50,6 +50,13 @@ const SellersPage = async () => {
     );
   }
 
+  // Verificar role do usuário na empresa
+  const userMember = await db.query.member.findFirst({
+    where: (m, { and, eq }) =>
+      and(eq(m.userId, session.user.id), eq(m.companyId, companyId)),
+  });
+  const isSalesperson = userMember?.role === "salesperson";
+
   // Verifica a role do usuário atual na empresa
   const meMember = await db.query.member.findFirst({
     where: (fields, { and, eq }) =>
@@ -98,7 +105,9 @@ const SellersPage = async () => {
           </PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <AddSellersButton pickups={pickups} eligibleUsers={eligibleUsers} />
+          {!isSalesperson && (
+            <AddSellersButton pickups={pickups} eligibleUsers={eligibleUsers} />
+          )}
         </PageActions>
       </PageHeader>
       <PageContent>
