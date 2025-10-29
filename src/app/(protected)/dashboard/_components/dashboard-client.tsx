@@ -113,7 +113,9 @@ export function DashboardClient({
                 <stat.icon className="text-muted-foreground h-4 w-4" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="text-2xl font-bold" suppressHydrationWarning>
+                  {stat.value}
+                </div>
               </CardContent>
             </Card>
           ))}

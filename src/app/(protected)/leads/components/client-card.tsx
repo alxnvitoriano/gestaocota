@@ -54,7 +54,7 @@ const ClientCard = ({ client, pickups }: ClientCardProps) => {
           </p>
           <p className="text-sm font-medium">
             Valor da Entrada:{" "}
-            <Badge variant="outline">
+            <Badge variant="outline" suppressHydrationWarning>
               {((client.entrance ?? 0) / 100).toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",

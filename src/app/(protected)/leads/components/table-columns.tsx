@@ -69,7 +69,9 @@ export const getClientsTableColumns = (
     header: "Entrada",
     cell: ({ row }) => {
       const entranceValue = row.original.entrance || 0;
-      return formatCurrency(entranceValue);
+      return (
+        <span suppressHydrationWarning>{formatCurrency(entranceValue)}</span>
+      );
     },
   },
   {
@@ -78,7 +80,11 @@ export const getClientsTableColumns = (
     header: "Criado em",
     cell: ({ row }) => {
       const createdAt = row.original.createdAt as Date;
-      return createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—";
+      return (
+        <span suppressHydrationWarning>
+          {createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—"}
+        </span>
+      );
     },
   },
   {
@@ -87,7 +93,11 @@ export const getClientsTableColumns = (
     header: "Atualizado em",
     cell: ({ row }) => {
       const updatedAt = row.original.updatedAt as Date | null;
-      return updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—";
+      return (
+        <span suppressHydrationWarning>
+          {updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—"}
+        </span>
+      );
     },
   },
   {

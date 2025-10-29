@@ -128,7 +128,9 @@ const TeamMembersTable = ({
                 )}
               </TableCell>
               <TableCell>
-                {dayjs(member.createdAt).format("DD/MM/YYYY")}
+                <span suppressHydrationWarning>
+                  {dayjs(member.createdAt).format("DD/MM/YYYY")}
+                </span>
               </TableCell>
             </TableRow>
           ))}

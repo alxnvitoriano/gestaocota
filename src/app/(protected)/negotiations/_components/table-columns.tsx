@@ -107,7 +107,9 @@ export const createNegociationsTableColumns = (
     header: "Crédito",
     cell: ({ row }) => {
       const raw = row.getValue("credit") as number | null | undefined;
-      return formatCurrency(raw);
+      return (
+        <span suppressHydrationWarning>{formatCurrency(raw)}</span>
+      );
     },
   },
   {
@@ -124,7 +126,11 @@ export const createNegociationsTableColumns = (
     header: "Criado em",
     cell: ({ row }) => {
       const createdAt = row.original.createdAt as Date;
-      return createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—";
+      return (
+        <span suppressHydrationWarning>
+          {createdAt ? dayjs(createdAt).format("DD/MM/YYYY HH:mm") : "—"}
+        </span>
+      );
     },
   },
   {
@@ -133,7 +139,11 @@ export const createNegociationsTableColumns = (
     header: "Atualizado em",
     cell: ({ row }) => {
       const updatedAt = row.original.updatedAt as Date | null;
-      return updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—";
+      return (
+        <span suppressHydrationWarning>
+          {updatedAt ? dayjs(updatedAt).format("DD/MM/YYYY HH:mm") : "—"}
+        </span>
+      );
     },
   },
   {
