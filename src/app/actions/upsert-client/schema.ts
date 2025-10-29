@@ -7,14 +7,6 @@ export const upsertClientSchema = z.object({
   indication: z.string().trim().min(1, "Indicação é obrigatória"),
   desire: z.string().trim().min(1, "Desire é obrigatório"),
   phone: z.string().trim().min(11, "Telefone é obrigatório"),
-  cpf: z
-    .string()
-    .trim()
-    .optional()
-    .refine(
-      (v) => v === undefined || v === "" || /^\d{11}$/.test(v),
-      "CPF inválido",
-    ),
   entranceValue: z
     .number()
     .int()

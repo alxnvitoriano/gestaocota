@@ -59,7 +59,6 @@ const UpsertClientForm = ({
     resolver: zodResolver(upsertClientSchema),
     defaultValues: {
       name: client?.name || "",
-      cpf: client?.cpf || "",
       indication: client?.indication || "",
       annuncio: client?.annuncio || "",
       desire: client?.desire || "",
@@ -73,7 +72,6 @@ const UpsertClientForm = ({
     if (isOpen) {
       form.reset({
         name: client?.name || "",
-        cpf: client?.cpf || "",
         indication: client?.indication || "",
         annuncio: client?.annuncio || "",
         desire: client?.desire || "",
@@ -111,7 +109,6 @@ const UpsertClientForm = ({
       desire: values.desire,
       annuncio: values.annuncio,
       indication: values.indication,
-      cpf: values.cpf,
       phone: values.phone,
     });
   };
@@ -145,29 +142,6 @@ const UpsertClientForm = ({
               )}
             />
 
-            <FormField
-              name="cpf"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>CPF</FormLabel>
-                  <FormControl>
-                    <PatternFormat
-                      customInput={Input}
-                      format="###.###.###-##"
-                      mask="_"
-                      placeholder="000.000.000-00"
-                      value={field.value ?? ""}
-                      onValueChange={(value) => {
-                        field.onChange(value.value);
-                      }}
-                      onBlur={field.onBlur}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               name="phone"
               control={form.control}
