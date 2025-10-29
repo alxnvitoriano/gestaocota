@@ -93,14 +93,25 @@ const UpsertClientForm = ({
       router.refresh();
       onSuccess?.();
     },
-    onError: () => {
+    onError: ({ error }) => {
+      console.error("[UpsertClientForm] erro ao salvar cliente:", {
+        serverError: error?.serverError,
+      });
       toast.error(
-        client?.id ? "Erro ao atualizar cliente" : "Erro ao adicionar cliente",
+        error?.serverError ??
+          (client?.id
+            ? "Erro ao atualizar cliente"
+            : "Erro ao adicionar cliente"),
       );
     },
   });
 
   const onSubmit = (values: z.infer<typeof upsertClientSchema>) => {
+    console.log("[UpsertClientForm] payload de envio:", {
+      ...values,
+      entranceValue: values.entranceValue * 100,
+      id: client?.id,
+    });
     upsertClientAction.execute({
       ...values,
       id: client?.id,
@@ -237,20 +248,23 @@ const UpsertClientForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Captador (opcional)</FormLabel>
-                  <FormControl>
-                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(v) => field.onChange(v || undefined)}
+                  >
+                    <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um captador" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {pickups.map((p) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      {pickups.map((p) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -261,20 +275,23 @@ const UpsertClientForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor (opcional)</FormLabel>
-                  <FormControl>
-                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(v) => field.onChange(v || undefined)}
+                  >
+                    <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione um vendedor" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {sellers.map((s) => (
-                          <SelectItem key={s.id} value={s.id}>
-                            {s.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      {sellers.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

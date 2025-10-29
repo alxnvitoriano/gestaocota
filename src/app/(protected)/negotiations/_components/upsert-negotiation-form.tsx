@@ -210,20 +210,20 @@ const UpsertNegociationForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Captador</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
                       <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione um captador" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {pickups.map((pickup) => (
-                          <SelectItem key={pickup.id} value={pickup.id}>
-                            {pickup.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      {pickups.map((pickup) => (
+                        <SelectItem key={pickup.id} value={pickup.id}>
+                          {pickup.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -264,29 +264,29 @@ const UpsertNegociationForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status da negociação</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={(val) =>
-                        field.onChange(val as NegotiationStatus)
-                      }
-                    >
+                  <Select
+                    value={field.value}
+                    onValueChange={(val) =>
+                      field.onChange(val as NegotiationStatus)
+                    }
+                  >
+                    <FormControl>
                       <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cotacion">Cotação</SelectItem>
-                        <SelectItem value="documentation">
-                          Documentação
-                        </SelectItem>
-                        <SelectItem value="meeting">Reunião</SelectItem>
-                        <SelectItem value="sold">Vendeu</SelectItem>
-                        <SelectItem value="notInterested">Desistiu</SelectItem>
-                        <SelectItem value="notCalled">Não ligou</SelectItem>
-                        <SelectItem value="Called">Ligou</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="cotacion">Cotação</SelectItem>
+                      <SelectItem value="documentation">
+                        Documentação
+                      </SelectItem>
+                      <SelectItem value="meeting">Reunião</SelectItem>
+                      <SelectItem value="sold">Vendeu</SelectItem>
+                      <SelectItem value="notInterested">Desistiu</SelectItem>
+                      <SelectItem value="notCalled">Não ligou</SelectItem>
+                      <SelectItem value="Called">Ligou</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -340,19 +340,22 @@ const UpsertNegociationForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Administradora</FormLabel>
-                  <FormControl>
-                    <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
                       <SelectTrigger className="w-full" disabled={readOnly}>
                         <SelectValue placeholder="Selecione uma administradora" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Evoy">Evoy</SelectItem>
-                        <SelectItem value="Alpha">Alpha</SelectItem>
-                        <SelectItem value="Reserva">Reserva</SelectItem>
-                        <SelectItem value="Eutbem">Eutbem</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Evoy">Evoy</SelectItem>
+                      <SelectItem value="Alpha">Alpha</SelectItem>
+                      <SelectItem value="Reserva">Reserva</SelectItem>
+                      <SelectItem value="Eutbem">Eutbem</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
