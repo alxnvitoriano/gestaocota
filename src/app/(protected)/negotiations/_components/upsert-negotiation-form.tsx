@@ -145,7 +145,10 @@ const UpsertNegociationForm = ({
   };
 
   // Auto-preencher "Veículo" (negociationResult) com o desejo do cliente
-  const selectedClientId = useWatch({ control: form.control, name: "clientId" });
+  const selectedClientId = useWatch({
+    control: form.control,
+    name: "clientId",
+  });
   const selectedClient = clients.find((c) => c.id === selectedClientId);
   const desiredVehicle = selectedClient?.desire ?? undefined;
 
@@ -302,6 +305,9 @@ const UpsertNegociationForm = ({
                       <SelectItem value="notInterested">Desistiu</SelectItem>
                       <SelectItem value="notCalled">Não ligou</SelectItem>
                       <SelectItem value="Called">Ligou</SelectItem>
+                      <SelectItem value="inNegociation">
+                        Em negociação
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

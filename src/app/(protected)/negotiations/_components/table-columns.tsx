@@ -79,6 +79,7 @@ export const createNegociationsTableColumns = (
         notInterested: "Desistiu",
         notCalled: "Não ligou",
         rejected: "Rejeitada",
+        inNegociation: "Em negociação",
       };
 
       const STATUS_VARIANTS: Record<
@@ -93,6 +94,7 @@ export const createNegociationsTableColumns = (
         notCalled: "destructive",
         Called: "default",
         rejected: "destructive",
+        inNegociation: "default",
       };
 
       const raw = row.getValue("negociationStatus") as
