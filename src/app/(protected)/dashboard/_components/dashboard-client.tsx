@@ -49,7 +49,7 @@ export function DashboardClient({
   const sellerColumns: ColumnDef<SellerRow>[] = [
     { accessorKey: "name", header: "Vendedor" },
     { accessorKey: "negotiations", header: "Negociações" },
-    { accessorKey: "accepted", header: "Aceitas" },
+    { accessorKey: "sold", header: "Vendeu" },
     {
       accessorKey: "conversion",
       header: "Conversão",

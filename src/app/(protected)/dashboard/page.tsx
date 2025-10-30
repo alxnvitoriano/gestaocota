@@ -177,9 +177,11 @@ export default async function Page() {
           <PageDescription>Resumo de performance e atividades.</PageDescription>
         </PageHeaderContent>
         <PageActions>
-          <Link href="/company-form">
-            <Button>Criar Empresa</Button>
-          </Link>
+          {!isSalesperson && !isPickup && (
+            <Link href="/company-form">
+              <Button>Criar Empresa</Button>
+            </Link>
+          )}
         </PageActions>
       </PageHeader>
       <PageContent>
