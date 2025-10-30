@@ -27,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Select,
   SelectContent,
@@ -206,20 +207,15 @@ const UpsertNegociationForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full" disabled={readOnly}>
-                        <SelectValue placeholder="Selecione um vendedor" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sellers.map((seller) => (
-                        <SelectItem key={seller.id} value={seller.id}>
-                          {seller.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      items={sellers}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Selecione um vendedor"
+                      disabled={readOnly}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -230,20 +226,15 @@ const UpsertNegociationForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Captador</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full" disabled={readOnly}>
-                        <SelectValue placeholder="Selecione um captador" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {pickups.map((pickup) => (
-                        <SelectItem key={pickup.id} value={pickup.id}>
-                          {pickup.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      items={pickups}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Selecione um captador"
+                      disabled={readOnly}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

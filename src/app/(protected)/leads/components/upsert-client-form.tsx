@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 import {
   Select,
   SelectContent,
@@ -259,23 +260,14 @@ const UpsertClientForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Captador (opcional)</FormLabel>
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(v) => field.onChange(v || undefined)}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um captador" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {pickups.map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      items={pickups}
+                      value={field.value ?? ""}
+                      onValueChange={(v) => field.onChange(v || undefined)}
+                      placeholder="Selecione um captador"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -286,23 +278,14 @@ const UpsertClientForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor (opcional)</FormLabel>
-                  <Select
-                    value={field.value ?? ""}
-                    onValueChange={(v) => field.onChange(v || undefined)}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um vendedor" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sellers.map((s) => (
-                        <SelectItem key={s.id} value={s.id}>
-                          {s.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      items={sellers}
+                      value={field.value ?? ""}
+                      onValueChange={(v) => field.onChange(v || undefined)}
+                      placeholder="Selecione um vendedor"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

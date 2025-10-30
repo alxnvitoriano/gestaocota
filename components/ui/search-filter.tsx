@@ -13,7 +13,7 @@ interface SearchFilterProps {
 }
 
 export function SearchFilter({
-  placeholder = "Buscar por nome ou CPF...",
+  placeholder = "Buscar por nome...",
   onSearch,
   className = "",
 }: SearchFilterProps) {
