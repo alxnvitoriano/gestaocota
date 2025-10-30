@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   clientsTable,
   negociationsTable,
@@ -321,12 +322,13 @@ const UpsertNegociationForm = ({
                 <FormItem>
                   <FormLabel>Observação</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
+                    <Textarea
+                      rows={4}
                       placeholder="Adicione observações"
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
-                      disabled={readOnly}
+                      readOnly={readOnly}
+                      className="min-h-24 break-words whitespace-pre-wrap"
                     />
                   </FormControl>
                   <FormMessage />
