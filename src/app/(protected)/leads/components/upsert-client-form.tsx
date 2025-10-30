@@ -195,9 +195,20 @@ const UpsertClientForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Anúncio</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Anúncio" />
-                  </FormControl>
+                  <Select
+                    value={field.value ?? ""}
+                    onValueChange={(v) => field.onChange(v)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o anúncio" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="OLX">OLX</SelectItem>
+                      <SelectItem value="Tráfego Pg">Tráfego Pg</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -207,7 +218,7 @@ const UpsertClientForm = ({
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Desejo</FormLabel>
+                  <FormLabel>Veiculo</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="Desejo do cliente..." />
                   </FormControl>
