@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -45,7 +46,7 @@ import { upsertNegotiationAction } from "../../actions/upsert-negociation";
 import { upsertNegotiationSchema } from "../../actions/upsert-negociation/schema";
 
 interface UpsertNegociationFormProps {
-  clients: Pick<typeof clientsTable.$inferSelect, "id" | "name">[];
+  clients: Pick<typeof clientsTable.$inferSelect, "id" | "name" | "desire">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
   readOnly?: boolean;
@@ -66,6 +67,7 @@ interface UpsertNegociationFormProps {
         client?: {
           id: string;
           name: string;
+          desire?: string | null;
           pickup?: { id: string; name: string } | null;
         } | null;
       })
@@ -103,7 +105,10 @@ const UpsertNegociationForm = ({
       clientId: negociation?.clientId || "",
       salespersonId: negociation?.salespersonId || "",
       negociationStatus: defaultStatus,
-      negociationResult: negociation?.negociationResult || undefined,
+      negociationResult:
+        negociation?.client?.desire ??
+        negociation?.negociationResult ??
+        undefined,
       credit: negociation?.credit || 0,
       administrator: undefined,
       observation: negociation?.observation || "",
@@ -138,6 +143,17 @@ const UpsertNegociationForm = ({
     if (readOnly) return;
     upsertNegociation(values);
   };
+
+  // Auto-preencher "Veículo" (negociationResult) com o desejo do cliente
+  const selectedClientId = useWatch({ control: form.control, name: "clientId" });
+  const selectedClient = clients.find((c) => c.id === selectedClientId);
+  const desiredVehicle = selectedClient?.desire ?? undefined;
+
+  // Sincroniza o valor do desejo do cliente no campo negociationResult
+  // sempre que o cliente selecionado mudar
+  useEffect(() => {
+    form.setValue("negociationResult", desiredVehicle);
+  }, [form, selectedClientId, desiredVehicle]);
 
   return (
     <DialogContent className="sm:max-w-[600px]">
@@ -300,13 +316,13 @@ const UpsertNegociationForm = ({
               name="negociationResult"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Veiculo</FormLabel>
+                  <FormLabel>Veículo (desejo)</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
-                      placeholder="Veiculo"
+                      placeholder="Veículo do lead"
                       value={field.value || ""}
-                      onChange={(e) => field.onChange(e.target.value)}
+                      readOnly
                       disabled={readOnly}
                     />
                   </FormControl>
@@ -328,7 +344,7 @@ const UpsertNegociationForm = ({
                       value={field.value || ""}
                       onChange={(e) => field.onChange(e.target.value)}
                       readOnly={readOnly}
-                      className="min-h-24 break-words whitespace-pre-wrap"
+                      className="min-h-24 wrap-break-word whitespace-pre-wrap"
                     />
                   </FormControl>
                   <FormMessage />

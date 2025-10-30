@@ -11,6 +11,7 @@ import { NegociationsTableActions } from "./table-actions";
 type SimpleClient = {
   id: string;
   name: string;
+  desire: string | null;
 };
 
 type SimpleSeller = {
@@ -22,6 +23,7 @@ type NegociationWithRelations = typeof negociationsTable.$inferSelect & {
   client: {
     id: string;
     name: string;
+    desire?: string | null;
     pickup?: { id: string; name: string } | null;
   } | null;
   salesperson: { id: string; name: string } | null;
@@ -114,11 +116,12 @@ export const createNegociationsTableColumns = (
     },
   },
   {
-    id: "negociationResult",
-    accessorKey: "negociationResult",
-    header: "Resultado da Negociação",
+    id: "desire",
+    accessorFn: (row) => row.client?.desire || "",
+    header: "Veículo",
     cell: ({ row }) => {
-      return row.getValue("negociationResult") || "Resultado não encontrado";
+      const value = row.getValue("desire") as string | undefined;
+      return value || "Veículo não encontrado";
     },
   },
   {

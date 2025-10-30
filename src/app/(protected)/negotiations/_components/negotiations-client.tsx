@@ -14,6 +14,7 @@ import { createNegociationsTableColumns } from "./table-columns";
 type SimpleClient = {
   id: string;
   name: string;
+  desire: string | null;
 };
 
 type SimpleSeller = {

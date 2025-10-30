@@ -33,6 +33,7 @@ import UpsertNegotiationForm from "./upsert-negotiation-form";
 type SimpleClient = {
   id: string;
   name: string;
+  desire: string | null;
 };
 
 type SimpleSeller = {

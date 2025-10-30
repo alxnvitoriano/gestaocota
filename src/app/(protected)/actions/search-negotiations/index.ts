@@ -42,6 +42,7 @@ export const searchNegociationsAction = actionClient
         client: {
           id: clientsTable.id,
           name: clientsTable.name,
+          desire: clientsTable.desire,
         },
         salesperson: {
           id: salespersonTable.id,

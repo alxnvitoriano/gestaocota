@@ -9,7 +9,7 @@ import { clientsTable, pickupTable, salespersonTable } from "@/db/schema";
 import UpsertNegotiationForm from "./upsert-negotiation-form";
 
 interface AddNegotiationButtonProps {
-  clients: Pick<typeof clientsTable.$inferSelect, "id" | "name">[];
+  clients: Pick<typeof clientsTable.$inferSelect, "id" | "name" | "desire">[];
   sellers: Pick<typeof salespersonTable.$inferSelect, "id" | "name">[];
   pickups: Pick<typeof pickupTable.$inferSelect, "id" | "name">[];
 }

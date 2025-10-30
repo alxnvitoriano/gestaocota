@@ -20,7 +20,6 @@ export const upsertNegotiationAction = actionClient
         clientId,
         salespersonId,
         negociationValue,
-        negociationResult,
         negociationStatus,
         observation,
         pickupId,
@@ -57,6 +56,13 @@ export const upsertNegotiationAction = actionClient
 
       let negotiation;
 
+      // Buscar o desejo (veículo) cadastrado no lead/cliente
+      const client = await db.query.clientsTable.findFirst({
+        where: (fields, { eq }) => eq(fields.id, clientId),
+        columns: { desire: true },
+      });
+      const desireFromLead = client?.desire ?? null;
+
       if (id) {
         // Atualizar negociação existente
         [negotiation] = await db
@@ -65,7 +71,7 @@ export const upsertNegotiationAction = actionClient
             clientId,
             salespersonId,
             negociationValue,
-            negociationResult,
+            negociationResult: desireFromLead,
             negociationStatus,
             observation,
             credit,
@@ -86,7 +92,7 @@ export const upsertNegotiationAction = actionClient
             clientId,
             salespersonId,
             negociationValue,
-            negociationResult,
+            negociationResult: desireFromLead,
             negociationStatus,
             observation,
             credit,

@@ -57,6 +57,7 @@ const NegotiationsPage = async () => {
     columns: {
       id: true,
       name: true,
+      desire: true,
     },
   });
 
@@ -112,7 +113,7 @@ const NegotiationsPage = async () => {
     where: eq(negociationsTable.companyId, companyId),
     with: {
       client: {
-        columns: { id: true, name: true },
+        columns: { id: true, name: true, desire: true },
         with: { pickup: { columns: { id: true, name: true } } },
       },
       salesperson: { columns: { id: true, name: true } },
